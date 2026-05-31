@@ -34,17 +34,41 @@
   --shadow-level-5: 0px 1px 1px rgba(0, 0, 0, 0.05), 0px 8px 16px -4px rgba(0, 0, 0, 0.1), 0px 24px 32px -8px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.08) inset;
 
   --animate-mesh: mesh 20s ease infinite;
+  --animate-blob-1: blob1 25s infinite alternate;
+  --animate-blob-2: blob2 30s infinite alternate;
+  --animate-blob-3: blob3 35s infinite alternate;
 
   @keyframes mesh {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
+
+  @keyframes blob1 {
+    0% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0px, 0px) scale(1); }
+  }
+
+  @keyframes blob2 {
+    0% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(-30px, 50px) scale(1.1); }
+    66% { transform: translate(20px, -20px) scale(0.9); }
+    100% { transform: translate(0px, 0px) scale(1); }
+  }
+
+  @keyframes blob3 {
+    0% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(50px, 50px) scale(1.1); }
+    66% { transform: translate(-40px, -40px) scale(0.9); }
+    100% { transform: translate(0px, 0px) scale(1); }
+  }
 }
 
 @layer base {
   body {
-    @apply bg-canvas-soft text-ink font-geist antialiased transition-colors duration-200;
+    @apply text-ink font-geist antialiased transition-colors duration-200;
   }
 
   .dark {
@@ -66,6 +90,18 @@
   background-size: 200% 200%;
 }
 
+@utility gemini-gradient-1 {
+  background: radial-gradient(circle at center, hsla(220, 100%, 70%, 0.4) 0%, transparent 70%);
+}
+
+@utility gemini-gradient-2 {
+  background: radial-gradient(circle at center, hsla(280, 100%, 70%, 0.4) 0%, transparent 70%);
+}
+
+@utility gemini-gradient-3 {
+  background: radial-gradient(circle at center, hsla(190, 100%, 70%, 0.4) 0%, transparent 70%);
+}
+
 @utility shadow-v-1 { shadow: var(--shadow-level-1); }
 @utility shadow-v-2 { shadow: var(--shadow-level-2); }
 @utility shadow-v-3 { shadow: var(--shadow-level-3); }
@@ -83,12 +119,26 @@
 }
 
 /* Custom Range Input */
+input[type="range"] {
+  @apply appearance-none bg-transparent cursor-pointer;
+}
+
+/* Track */
+input[type="range"]::-webkit-slider-runnable-track {
+  @apply h-1.5 w-full rounded-full bg-hairline-strong/40 border border-hairline;
+}
+
+input[type="range"]::-moz-range-track {
+  @apply h-1.5 w-full rounded-full bg-hairline-strong/40 border border-hairline;
+}
+
+/* Thumb */
 input[type="range"]::-webkit-slider-thumb {
-  @apply appearance-none h-4 w-4 rounded-full bg-ink border-2 border-canvas shadow-v-1 cursor-pointer transition-transform hover:scale-110 active:scale-95;
+  @apply appearance-none h-4 w-4 rounded-full bg-ink border-2 border-canvas shadow-v-1 -mt-1.25 transition-transform hover:scale-110 active:scale-95;
 }
 
 input[type="range"]::-moz-range-thumb {
-  @apply appearance-none h-4 w-4 rounded-full bg-ink border-2 border-canvas shadow-v-1 cursor-pointer transition-transform hover:scale-110 active:scale-95;
+  @apply appearance-none h-4 w-4 rounded-full bg-ink border-2 border-canvas shadow-v-1 transition-transform hover:scale-110 active:scale-95;
 }
 
 input[type="number"]::-webkit-inner-spin-button,

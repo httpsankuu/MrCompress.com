@@ -50,7 +50,7 @@ const OUTPUT_FORMATS = [
   { label: 'PDF', value: 'application/pdf' },
 ];
 
-export default function Optimizer() {
+export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'compress' | 'convert' }) {
   const [image, setImage] = useState<ImageState | null>(null);
   const [quality, setQuality] = useState(80);
   const [targetWidth, setTargetWidth] = useState<number>(0);
@@ -67,7 +67,7 @@ export default function Optimizer() {
   const [outputFormat, setOutputFormat] = useState('original');
   const [isConvertingHeic, setIsConvertingHeic] = useState(false);
   const [isConvertingPdf, setIsConvertingPdf] = useState(false);
-  const [activeTab, setActiveTab] = useState<'compress' | 'convert'>('compress');
+  const [activeTab, setActiveTab] = useState<'compress' | 'convert'>(initialTab);
 
   const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -162,8 +162,9 @@ export default function Optimizer() {
 
   const onCropComplete = useCallback((croppedArea: any, croppedAreaPixels: CropArea) => {
     setCroppedAreaPixels(croppedAreaPixels);
-    setTargetWidth(croppedAreaPixels.width);
-    setTargetHeight(croppedAreaPixels.height);
+    // Real-time dimension sync
+    setTargetWidth(Math.round(croppedAreaPixels.width));
+    setTargetHeight(Math.round(croppedAreaPixels.height));
   }, []);
 
   const compressImage = useCallback(async () => {
@@ -298,7 +299,7 @@ export default function Optimizer() {
                 onClick={() => setActiveTab('compress')}
                 className={cn(
                   "flex-1 py-4 text-xs font-semibold transition-all flex items-center justify-center gap-2",
-                  activeTab === 'compress' ? "bg-canvas text-ink" : "text-mute hover:text-ink hover:bg-canvas-soft-2"
+                  activeTab === 'compress' ? "bg-ink text-canvas" : "text-mute hover:text-ink hover:bg-canvas-soft-2"
                 )}
               >
                 <Sliders className="h-3.5 w-3.5" />
@@ -308,7 +309,7 @@ export default function Optimizer() {
                 onClick={() => setActiveTab('convert')}
                 className={cn(
                   "flex-1 py-4 text-xs font-semibold border-l border-hairline transition-all flex items-center justify-center gap-2",
-                  activeTab === 'convert' ? "bg-canvas text-ink" : "text-mute hover:text-ink hover:bg-canvas-soft-2"
+                  activeTab === 'convert' ? "bg-ink text-canvas" : "text-mute hover:text-ink hover:bg-canvas-soft-2"
                 )}
               >
                 <ArrowRightLeft className="h-3.5 w-3.5" />
@@ -445,7 +446,7 @@ export default function Optimizer() {
                       value={quality} 
                       disabled={!image}
                       onChange={(e) => setQuality(parseInt(e.target.value))}
-                      className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-canvas-soft-2 accent-ink disabled:opacity-30"
+                      className="w-full disabled:opacity-30"
                     />
                     <div className="flex justify-between text-[10px] text-mute font-mono">
                       <span>SMALL</span>

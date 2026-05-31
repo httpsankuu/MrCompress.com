@@ -1,0 +1,25 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Optimizer from '../components/Optimizer';
+---
+
+<Layout 
+	title="Compress Image Size Online - Fast, Free & Secure"
+	description="Reduce image file size without losing quality. Compress images to 100kb, 50kb, or 2mb for free. No uploads, everything happens in your browser."
+	keywords="compress image size, compress image online, compress image file, compress image free, compress image without losing quality, compress image to 2mb, compress image to 100kb, compress image to 50kb"
+>
+	<section class="relative overflow-hidden pt-20 pb-12 sm:pt-32">
+		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+			<h1 class="text-4xl font-bold tracking-tight text-ink sm:text-6xl mb-6">
+				Compress <span class="bg-gradient-to-r from-geist-link to-cyan-deep bg-clip-text text-transparent">Image.</span>
+			</h1>
+			<p class="mx-auto max-w-2xl text-lg text-body mb-10 leading-relaxed">
+				Reduce file size without sacrificing quality. Fast, local, and secure.
+			</p>
+		</div>
+	</section>
+
+	<section class="py-12">
+		<Optimizer client:only="react" initialTab="compress" />
+	</section>
+</Layout>

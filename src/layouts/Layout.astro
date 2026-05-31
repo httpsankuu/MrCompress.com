@@ -3,9 +3,21 @@ import "../styles/global.css";
 
 interface Props {
 	title: string;
+	description?: string;
+	keywords?: string;
+	ogImage?: string;
+	ogType?: string;
 }
 
-const { title } = Astro.props;
+const { 
+	title, 
+	description = "Compress images online for free without losing quality. Optimize image size to 100kb, 50kb, or 20kb easily with our secure, local image optimizer.",
+	keywords = "compress image, compress image size, compress image online, compress image file, compress image free, compress image without losing quality",
+	ogImage = "/favicon-96x96.png",
+	ogType = "website"
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imageoptmize.com");
 ---
 
 <!doctype html>
@@ -13,28 +25,67 @@ const { title } = Astro.props;
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="shortcut icon" href="/favicon.ico" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+		<meta name="apple-mobile-web-app-title" content="Optimizer" />
+		<link rel="manifest" href="/site.webmanifest" />
 		<meta name="generator" content={Astro.generator} />
+		
+		<!-- Primary Meta Tags -->
 		<title>{title}</title>
+		<meta name="title" content={title} />
+		<meta name="description" content={description} />
+		<meta name="keywords" content={keywords} />
+		<link rel="canonical" href={canonicalURL} />
+
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content={ogType} />
+		<meta property="og:url" content={Astro.url} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={new URL(ogImage, Astro.url)} />
+
+		<!-- Twitter -->
+		<meta property="twitter:card" content="summary_large_image" />
+		<meta property="twitter:url" content={Astro.url} />
+		<meta property="twitter:title" content={title} />
+		<meta property="twitter:description" content={description} />
+		<meta property="twitter:image" content={new URL(ogImage, Astro.url)} />
+
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+		<slot name="head" />
 	</head>
-	<body class="selection:bg-ink selection:text-canvas">
+	<body class="selection:bg-ink selection:text-canvas relative overflow-x-hidden min-h-screen">
+		<div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none bg-canvas-soft">
+			<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] blur-[120px] rounded-full animate-blob-1 gemini-gradient-1 opacity-80"></div>
+			<div class="absolute bottom-[10%] right-[-5%] w-[35%] h-[35%] blur-[100px] rounded-full animate-blob-2 gemini-gradient-2 opacity-70"></div>
+			<div class="absolute top-[20%] right-[10%] w-[30%] h-[30%] blur-[80px] rounded-full animate-blob-3 gemini-gradient-3 opacity-60"></div>
+		</div>
 		<nav class="sticky top-0 z-50 h-16 border-b border-hairline bg-canvas/80 backdrop-blur-md">
 			<div class="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 				<a href="/" class="flex items-center gap-2">
-					<div class="h-6 w-6 bg-ink rounded-sm flex items-center justify-center">
-						<div class="h-3 w-3 border-2 border-canvas rotate-45"></div>
-					</div>
+					<img src="/favicon-96x96.png" alt="Logo" class="h-6 w-6 rounded-sm" />
 					<span class="text-sm font-semibold tracking-tight text-ink">Image Optimizer</span>
 				</a>
 				<div class="flex items-center gap-6">
-					<div class="hidden sm:flex items-center gap-6">
-						<a href="/about" class="text-xs font-medium text-mute hover:text-ink transition-colors">About</a>
-						<a href="/privacy" class="text-xs font-medium text-mute hover:text-ink transition-colors">Privacy</a>
+					<div class="hidden md:flex items-center gap-3">
+						<a href="/compress" class="flex items-center gap-1.5 px-3 py-1.5 rounded-geist bg-ink text-canvas hover:opacity-90 transition-all text-xs font-semibold shadow-v-2">
+							<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
+							Compress
+						</a>
+						<a href="/convert" class="flex items-center gap-1.5 px-3 py-1.5 rounded-geist border border-hairline bg-canvas text-ink hover:bg-canvas-soft transition-all text-xs font-semibold shadow-v-1">
+							<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right-left"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+							Convert
+						</a>
+						<div class="w-px h-4 bg-hairline mx-2"></div>
+						<a href="/about" class="text-xs font-medium text-mute hover:text-ink transition-colors px-1">About</a>
+						<a href="/contact" class="text-xs font-medium text-mute hover:text-ink transition-colors px-1">Contact</a>
 					</div>
-					<div class="h-4 w-px bg-hairline hidden sm:block"></div>
+					<div class="h-4 w-px bg-hairline hidden md:block"></div>
 					<div class="flex items-center gap-3">
 						<button 
 							id="theme-toggle"
@@ -47,9 +98,6 @@ const { title } = Astro.props;
 							<svg id="moon-icon" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
 							</svg>
-						</button>
-						<button class="h-8 px-4 bg-ink text-canvas text-xs font-medium rounded-geist shadow-v-2 transition-all hover:opacity-90">
-							Feedback
 						</button>
 					</div>
 				</div>
@@ -96,19 +144,45 @@ const { title } = Astro.props;
 		<main>
 			<slot />
 		</main>
-		<footer class="border-t border-hairline bg-canvas py-12 mt-24">
+		<footer class="border-t border-hairline bg-canvas py-16 mt-24">
 			<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-				<div class="flex flex-col items-center justify-between gap-6 sm:flex-row">
-					<div class="flex items-center gap-2">
-						<div class="h-5 w-5 bg-ink rounded-sm flex items-center justify-center scale-75">
-							<div class="h-2.5 w-2.5 border-2 border-canvas rotate-45"></div>
-						</div>
-						<span class="text-xs font-medium text-mute">© 2026 imageoptmize.com</span>
+				<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+					<div class="col-span-1 md:col-span-2">
+						<a href="/" class="flex items-center gap-2 mb-4">
+							<img src="/favicon-96x96.png" alt="Logo" class="h-6 w-6 rounded-sm" />
+							<span class="text-sm font-semibold tracking-tight text-ink">Image Optimizer</span>
+						</a>
+						<p class="text-xs text-mute max-w-xs leading-relaxed">
+							The fastest, most secure way to optimize your images. Everything happens locally in your browser. Private by design.
+						</p>
 					</div>
-					<div class="flex gap-8">
-						<a href="#" class="text-xs text-mute hover:text-ink">Terms</a>
-						<a href="#" class="text-xs text-mute hover:text-ink">Privacy</a>
-						<a href="#" class="text-xs text-mute hover:text-ink">Contact</a>
+					<div>
+						<h4 class="text-xs font-bold text-ink mb-4 uppercase tracking-wider">Product</h4>
+						<ul class="space-y-3">
+							<li><a href="/compress" class="text-xs text-mute hover:text-ink transition-colors">Compress Image</a></li>
+							<li><a href="/convert" class="text-xs text-mute hover:text-ink transition-colors">Convert Format</a></li>
+							<li><a href="/#faq" class="text-xs text-mute hover:text-ink transition-colors">FAQs</a></li>
+						</ul>
+					</div>
+					<div>
+						<h4 class="text-xs font-bold text-ink mb-4 uppercase tracking-wider">Company</h4>
+						<ul class="space-y-3">
+							<li><a href="/about" class="text-xs text-mute hover:text-ink transition-colors">About Us</a></li>
+							<li><a href="/contact" class="text-xs text-mute hover:text-ink transition-colors">Contact Us</a></li>
+							<li><a href="/privacy" class="text-xs text-mute hover:text-ink transition-colors">Privacy Policy</a></li>
+							<li><a href="/terms" class="text-xs text-mute hover:text-ink transition-colors">Terms & Conditions</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="pt-8 border-t border-hairline flex flex-col items-center justify-between gap-6 sm:flex-row">
+					<p class="text-[10px] uppercase tracking-widest text-mute font-medium">© 2026 imageoptmize.com • All rights reserved.</p>
+					<div class="flex gap-6">
+						<a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="text-mute hover:text-ink transition-colors">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-twitter"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+						</a>
+						<a href="https://github.com" target="_blank" rel="noopener noreferrer" class="text-mute hover:text-ink transition-colors">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-github"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+						</a>
 					</div>
 				</div>
 			</div>

@@ -1,0 +1,25 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Optimizer from '../components/Optimizer';
+---
+
+<Layout 
+	title="Convert Image Format Online - PNG, JPG, WebP, AVIF, PDF"
+	description="Convert your images to different formats online for free. Support for WebP, AVIF, JPEG, PNG, and PDF conversion without server processing."
+	keywords="convert image format, image converter, webp to jpg, png to webp, avif converter, image to pdf"
+>
+	<section class="relative overflow-hidden pt-20 pb-12 sm:pt-32">
+		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+			<h1 class="text-4xl font-bold tracking-tight text-ink sm:text-6xl mb-6">
+				Convert <span class="bg-gradient-to-r from-violet to-highlight-magenta bg-clip-text text-transparent">Format.</span>
+			</h1>
+			<p class="mx-auto max-w-2xl text-lg text-body mb-10 leading-relaxed">
+				Switch between PNG, JPEG, WebP, AVIF, and PDF instantly.
+			</p>
+		</div>
+	</section>
+
+	<section class="py-12">
+		<Optimizer client:only="react" initialTab="convert" />
+	</section>
+</Layout>
