@@ -17,7 +17,7 @@ const {
 	ogType = "website"
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imageoptmize.com");
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imagoptimize.com");
 ---
 
 <!doctype html>
@@ -58,6 +58,102 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imageopt
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 		<slot name="head" />
+
+		<!-- Google Translate Script -->
+		<script type="text/javascript" is:inline>
+			function googleTranslateElementInit() {
+				new google.translate.TranslateElement({
+					pageLanguage: 'en',
+					layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+					autoDisplay: false
+				}, 'google_translate_element');
+			}
+		</script>
+		<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" is:inline></script>
+
+		<style is:global>
+			/* Nuclear option to hide all Google Translate artifacts */
+			.goog-te-banner-frame,
+			.goog-te-banner,
+			.goog-te-balloon-frame,
+			.goog-te-menu-frame,
+			iframe#\:1\.container,
+			iframe#\:0\.container,
+			iframe[id*=":1.container"],
+			iframe[id*=":0.container"],
+			iframe.goog-te-banner-frame,
+			iframe.goog-te-menu-frame,
+			#goog-gt-tt,
+			.goog-gt-tt,
+			.goog-te-spinner-pos,
+			.goog-logo-link,
+			.goog-te-gadget-icon,
+			.skiptranslate[id*="goog-gt-tt"] {
+				display: none !important;
+				visibility: hidden !important;
+				opacity: 0 !important;
+				pointer-events: none !important;
+				height: 0 !important;
+				width: 0 !important;
+			}
+
+			body {
+				top: 0 !important;
+				position: static !important;
+			}
+
+			/* Remove the highlight Google adds to translated text */
+			.goog-text-highlight {
+				background-color: transparent !important;
+				box-shadow: none !important;
+				border: none !important;
+			}
+
+			/* Ensure our custom UI remains visible */
+			.skiptranslate {
+				display: inline-block !important;
+			}
+
+
+
+
+			.goog-te-gadget-simple {
+				background-color: transparent !important;
+				border: 1px solid var(--hairline) !important;
+				padding: 4px 8px !important;
+				border-radius: 6px !important;
+				font-size: 12px !important;
+				font-family: 'Inter', sans-serif !important;
+				display: flex !important;
+				align-items: center !important;
+				gap: 4px !important;
+				cursor: pointer !important;
+				transition: all 0.2s !important;
+			}
+			.goog-te-gadget-simple:hover {
+				background-color: var(--canvas-soft) !important;
+			}
+			.goog-te-menu-value {
+				color: var(--ink) !important;
+				display: flex !important;
+				align-items: center !important;
+				gap: 4px !important;
+			}
+			.goog-te-menu-value span {
+				border-left: none !important;
+			}
+			.goog-te-menu-value img {
+				display: none !important;
+			}
+			/* Dark mode adjustments for Google Translate */
+			.dark .goog-te-gadget-simple {
+				border-color: #333 !important;
+				background-color: #111 !important;
+			}
+			.dark .goog-te-menu-value {
+				color: #eee !important;
+			}
+		</style>
 	</head>
 	<body class="selection:bg-ink selection:text-canvas relative overflow-x-hidden min-h-screen">
 		<div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none bg-canvas-soft">
@@ -87,9 +183,81 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imageopt
 					</div>
 					<div class="h-4 w-px bg-hairline hidden md:block"></div>
 					<div class="flex items-center gap-3">
+						<!-- Custom Language Selector -->
+						<div class="relative group hidden sm:block skiptranslate">
+							<button 
+								class="flex items-center gap-2 h-8 px-3 rounded-geist border border-hairline bg-canvas text-mute hover:text-ink hover:bg-canvas-soft transition-all text-[11px] font-medium shadow-v-1"
+								aria-label="Select Language"
+							>
+								<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-languages"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/><path d="M14 18l1 2h4l1-2"/></svg>
+								<span id="current-lang">English</span>
+								<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down opacity-50 group-hover:translate-y-0.5 transition-transform"><path d="m6 9 6 6 6-6"/></svg>
+							</button>
+							<div class="absolute right-0 top-full mt-2 w-48 rounded-geist border border-hairline bg-canvas shadow-v-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[100] p-1">
+								<div class="grid grid-cols-1 gap-0.5 max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-hairline" id="lang-options">
+									<button data-lang="en" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										English <span>🇺🇸</span>
+									</button>
+									<button data-lang="es" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										Español <span>🇪🇸</span>
+									</button>
+									<button data-lang="fr" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										Français <span>🇫🇷</span>
+									</button>
+									<button data-lang="de" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										Deutsch <span>🇩🇪</span>
+									</button>
+									<button data-lang="hi" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										हिन्दी <span>🇮🇳</span>
+									</button>
+									<button data-lang="zh-CN" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										中文 <span>🇨🇳</span>
+									</button>
+									<button data-lang="ja" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										日本語 <span>🇯🇵</span>
+									</button>
+									<button data-lang="pt" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										Português <span>🇵🇹</span>
+									</button>
+									<button data-lang="ar" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										العربية <span>🇸🇦</span>
+									</button>
+									<button data-lang="ru" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										Русский <span>🇷🇺</span>
+									</button>
+									<button data-lang="ko" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										한국어 <span>🇰🇷</span>
+									</button>
+									<button data-lang="it" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										Italiano <span>🇮🇹</span>
+									</button>
+									<button data-lang="tr" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										Türkçe <span>🇹🇷</span>
+									</button>
+									<button data-lang="vi" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										Tiếng Việt <span>🇻🇳</span>
+									</button>
+									<button data-lang="pl" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										Polski <span>🇵🇱</span>
+									</button>
+									<button data-lang="nl" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										Nederlands <span>🇳🇱</span>
+									</button>
+									<button data-lang="th" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										ไทย <span>🇹🇭</span>
+									</button>
+									<button data-lang="id" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
+										Bahasa Indonesia <span>🇮🇩</span>
+									</button>
+								</div>
+							</div>
+						</div>
+						<!-- Hidden Original Widget -->
+						<div id="google_translate_element" style="position: absolute; opacity: 0; pointer-events: none; z-index: -1;"></div>
+						
 						<button 
 							id="theme-toggle"
-							class="flex h-8 w-8 items-center justify-center rounded-geist border border-hairline bg-canvas text-ink shadow-v-1 transition-all hover:bg-canvas-soft-2"
+							class="flex h-8 w-8 items-center justify-center rounded-geist border border-hairline bg-canvas text-ink shadow-v-1 transition-all hover:bg-canvas-soft-2 skiptranslate"
 							aria-label="Toggle dark mode"
 						>
 							<svg id="sun-icon" class="hidden h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -140,6 +308,110 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imageopt
 		
 			document.getElementById("theme-toggle").addEventListener("click", handleToggleClick);
 			updateIcons();
+
+			// Custom Language Selector Logic
+			const langOptions = document.getElementById('lang-options');
+			if (langOptions) {
+				langOptions.addEventListener('click', (e) => {
+					const button = e.target.closest('button');
+					if (!button) return;
+
+					const lang = button.getAttribute('data-lang');
+					const langText = button.firstChild.textContent.trim();
+					
+					const triggerTranslation = () => {
+						const googleSelect = document.querySelector('.goog-te-combo');
+						if (googleSelect) {
+							googleSelect.value = lang;
+							googleSelect.dispatchEvent(new Event('change'));
+							
+							const currentLangDisplay = document.getElementById('current-lang');
+							if (currentLangDisplay) {
+								currentLangDisplay.textContent = langText;
+							}
+							return true;
+						}
+						return false;
+					};
+
+					// Set cookie with broad scope to ensure persistence
+					const domain = window.location.hostname;
+					const cookieValue = `/en/${lang}`;
+					const expires = new Date();
+					expires.setTime(expires.getTime() + (365 * 24 * 60 * 60 * 1000)); // 1 year
+					
+					document.cookie = `googtrans=${cookieValue}; expires=${expires.toUTCString()}; path=/; domain=${domain}`;
+					document.cookie = `googtrans=${cookieValue}; expires=${expires.toUTCString()}; path=/`;
+
+					if (!triggerTranslation()) {
+						// If instant trigger fails, reload to apply cookie
+						const currentLangDisplay = document.getElementById('current-lang');
+						if (currentLangDisplay) {
+							currentLangDisplay.textContent = langText;
+						}
+						window.location.reload();
+					}
+				});
+			}
+
+			// Persistent UI cleanup for Google Translate
+			const cleanupGoogleUI = () => {
+				const selectors = [
+					'.goog-te-banner-frame', 
+					'#goog-gt-tt', 
+					'.goog-te-balloon-frame', 
+					'.goog-te-menu-frame',
+					'iframe[id*=":1.container"]',
+					'iframe[id*=":0.container"]',
+					'iframe[id*=":2.container"]',
+					'.skiptranslate.goog-te-gadget',
+					'.VIpgJm-Zp6pS-aZ2wYd-W79pY',
+					'.goog-te-spinner-pos'
+				];
+				selectors.forEach(s => {
+					const el = document.querySelector(s);
+					if (el) {
+						el.style.setProperty('display', 'none', 'important');
+						el.style.setProperty('visibility', 'hidden', 'important');
+						el.style.setProperty('opacity', '0', 'important');
+						el.style.setProperty('pointer-events', 'none', 'important');
+					}
+				});
+				if (document.body.style.top !== '0px') {
+					document.body.style.setProperty('top', '0px', 'important');
+				}
+			};
+
+			// Run cleanup very frequently initially, then slow down
+			let cleanupInterval = setInterval(cleanupGoogleUI, 50);
+			setTimeout(() => {
+				clearInterval(cleanupInterval);
+				setInterval(cleanupGoogleUI, 300);
+			}, 5000);
+			const observer = new MutationObserver(cleanupGoogleUI);
+			observer.observe(document.documentElement, { attributes: true, childList: true, subtree: true });
+
+			// On page load, sync the current language label
+			window.addEventListener('load', () => {
+				const getCookie = (name) => {
+					const value = `; ${document.cookie}`;
+					const parts = value.split(`; ${name}=`);
+					if (parts.length === 2) return parts.pop().split(';').shift();
+				};
+				
+				const googtrans = getCookie('googtrans');
+				if (googtrans) {
+					const langCode = googtrans.split('/').pop();
+					const matchingBtn = document.querySelector(`#lang-options button[data-lang="${langCode}"]`);
+					if (matchingBtn) {
+						const langText = matchingBtn.firstChild.textContent.trim();
+						const currentLangDisplay = document.getElementById('current-lang');
+						if (currentLangDisplay) {
+							currentLangDisplay.textContent = langText;
+						}
+					}
+				}
+			});
 		</script>
 		<main>
 			<slot />
@@ -175,7 +447,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imageopt
 					</div>
 				</div>
 				<div class="pt-8 border-t border-hairline flex flex-col items-center justify-between gap-6 sm:flex-row">
-					<p class="text-[10px] uppercase tracking-widest text-mute font-medium">© 2026 imageoptmize.com • All rights reserved.</p>
+					<p class="text-[10px] uppercase tracking-widest text-mute font-medium">© 2026 imagoptimize.com • All rights reserved.</p>
 					<div class="flex gap-6">
 						<a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="text-mute hover:text-ink transition-colors">
 							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-twitter"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
