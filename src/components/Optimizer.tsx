@@ -331,7 +331,7 @@ export default function Optimizer() {
                   <Upload className="h-6 w-6 text-mute" />
                 </div>
                 <p className="mt-4 text-sm font-medium text-ink">Click to upload or drag and drop</p>
-                <p className="mt-1 text-xs text-mute">PNG, JPG, WebP or HEIC (max. 25MB)</p>
+                <p className="mt-1 text-xs text-mute">PNG, JPG, WebP, HEIC or PDF (max. 25MB)</p>
                 <input 
                   id="fileInput" 
                   type="file" 
