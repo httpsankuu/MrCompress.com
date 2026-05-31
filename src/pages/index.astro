@@ -1,11 +1,66 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Optimizer from '../components/Optimizer';
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Image Optimizer | Secure, Local Image Compression">
+	<section class="relative overflow-hidden pt-20 pb-12 sm:pt-32">
+		<div class="absolute inset-0 -z-10 animate-mesh mesh-gradient opacity-40"></div>
+		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+			<h1 class="text-4xl font-bold tracking-tight text-ink sm:text-6xl mb-6">
+				Optimize images with<br />
+				<span class="bg-gradient-to-r from-geist-link to-cyan-deep bg-clip-text text-transparent">zero server processing.</span>
+			</h1>
+			<p class="mx-auto max-w-2xl text-lg text-body mb-10 leading-relaxed">
+				The fastest way to compress, crop, and resize your images. 
+				Everything happens right in your browser. Private, secure, and instant.
+			</p>
+			<div class="flex items-center justify-center gap-4">
+				<a href="#optimizer" class="rounded-geist-pill bg-ink px-6 py-2.5 text-sm font-semibold text-canvas shadow-v-4 transition-all hover:opacity-90">
+					Start Optimizing
+				</a>
+				<a href="https://github.com" class="rounded-geist-pill border border-hairline bg-canvas px-6 py-2.5 text-sm font-semibold text-ink shadow-v-1 transition-all hover:bg-canvas-soft">
+					View Source
+				</a>
+			</div>
+		</div>
+	</section>
+
+	<section id="optimizer" class="py-12">
+		<Optimizer client:only="react" />
+	</section>
+
+	<section class="py-24 bg-canvas-soft-2 border-y border-hairline">
+		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+			<div class="grid grid-cols-1 gap-12 sm:grid-cols-3">
+				<div class="space-y-4">
+					<div class="h-10 w-10 rounded-geist bg-ink flex items-center justify-center shadow-v-2">
+						<svg class="h-5 w-5 text-canvas" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+						</svg>
+					</div>
+					<h3 class="text-sm font-bold text-ink">Privacy First</h3>
+					<p class="text-xs text-body leading-relaxed">Your images are never uploaded to any server. All processing is done locally via the Web Canvas API.</p>
+				</div>
+				<div class="space-y-4">
+					<div class="h-10 w-10 rounded-geist bg-ink flex items-center justify-center shadow-v-2">
+						<svg class="h-5 w-5 text-canvas" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+						</svg>
+					</div>
+					<h3 class="text-sm font-bold text-ink">Instant Feedback</h3>
+					<p class="text-xs text-body leading-relaxed">See the exact file size and visual result as you adjust quality and dimensions in real-time.</p>
+				</div>
+				<div class="space-y-4">
+					<div class="h-10 w-10 rounded-geist bg-ink flex items-center justify-center shadow-v-2">
+						<svg class="h-5 w-5 text-canvas" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v14a2 2 0 002 2z" />
+						</svg>
+					</div>
+					<h3 class="text-sm font-bold text-ink">Integrated Tools</h3>
+					<p class="text-xs text-body leading-relaxed">Crop to popular aspect ratios or resize to exact pixel dimensions without leaving the app.</p>
+				</div>
+			</div>
+		</div>
+	</section>
 </Layout>
