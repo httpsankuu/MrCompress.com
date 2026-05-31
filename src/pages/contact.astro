@@ -27,6 +27,65 @@ import Layout from '../layouts/Layout.astro';
 					</div>
 				</div>
 
+				<div class="mt-16 rounded-2xl border border-hairline bg-canvas p-8 shadow-v-2">
+					<h2 class="text-2xl font-bold text-ink mb-6">Send us a Message</h2>
+					<form action="mailto:support@imagninja.com" method="post" enctype="text/plain" class="space-y-6">
+						<div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+							<div class="space-y-2">
+								<label for="name" class="text-xs font-semibold text-ink uppercase tracking-wider">Name</label>
+								<input 
+									type="text" 
+									id="name" 
+									name="name" 
+									required 
+									placeholder="Your name"
+									class="w-full h-11 rounded-geist border border-hairline bg-canvas px-4 text-sm text-ink focus:outline-none focus:ring-1 focus:ring-ink transition-all"
+								/>
+							</div>
+							<div class="space-y-2">
+								<label for="email" class="text-xs font-semibold text-ink uppercase tracking-wider">Email</label>
+								<input 
+									type="email" 
+									id="email" 
+									name="email" 
+									required 
+									placeholder="your@email.com"
+									autocomplete="email"
+									class="w-full h-11 rounded-geist border border-hairline bg-canvas px-4 text-sm text-ink focus:outline-none focus:ring-1 focus:ring-ink transition-all"
+								/>
+							</div>
+						</div>
+						<div class="space-y-2">
+							<label for="subject" class="text-xs font-semibold text-ink uppercase tracking-wider">Subject</label>
+							<input 
+								type="text" 
+								id="subject" 
+								name="subject" 
+								required 
+								placeholder="How can we help?"
+								class="w-full h-11 rounded-geist border border-hairline bg-canvas px-4 text-sm text-ink focus:outline-none focus:ring-1 focus:ring-ink transition-all"
+							/>
+						</div>
+						<div class="space-y-2">
+							<label for="message" class="text-xs font-semibold text-ink uppercase tracking-wider">Message</label>
+							<textarea 
+								id="message" 
+								name="message" 
+								required 
+								rows="5" 
+								placeholder="Tell us more about your request..."
+								class="w-full rounded-geist border border-hairline bg-canvas p-4 text-sm text-ink focus:outline-none focus:ring-1 focus:ring-ink transition-all resize-none"
+							></textarea>
+						</div>
+						<button 
+							type="submit" 
+							class="w-full rounded-geist-pill bg-ink py-4 text-sm font-bold text-canvas shadow-v-4 transition-all hover:opacity-90 active:scale-[0.98]"
+						>
+							Send Message
+						</button>
+					</form>
+				</div>
+
 				<h2 class="text-xl font-bold text-ink mt-12 mb-4">Response Time</h2>
 				<p class="mb-4">
 					We aim to respond to all inquiries within 24-48 hours. Please provide as much detail as possible so we can better assist you.

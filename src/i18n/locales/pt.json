@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "compress": "Comprimir",
+    "convert": "Converter",
+    "about": "Sobre",
+    "contact": "Contato",
+    "privacy": "Privacidade"
+  },
+  "footer": {
+    "rights": "Todos os direitos reservados."
+  },
+  "optimizer": {
+    "compress_tab": "Comprimir Imagem",
+    "convert_tab": "Converter Formato",
+    "upload_text": "Clique para enviar ou arraste e solte",
+    "upload_hint": "PNG, JPG, WebP, HEIC ou PDF (máx. 25MB)",
+    "upload_sr": "Enviar imagem",
+    "done_editing": "Concluído",
+    "crop_rotate": "Cortar e Rotacionar",
+    "reset": "Redefinir",
+    "original": "Original",
+    "optimized": "Otimizado",
+    "quality": "Qualidade da Imagem",
+    "small": "PEQUENO",
+    "best": "MELHOR",
+    "output_format": "Formato de Saída",
+    "dimensions": "Dimensões",
+    "lock_aspect": "Bloquear Proporção",
+    "width": "Largura",
+    "height": "Altura",
+    "download_compressed": "Baixar Comprimida",
+    "download_converted": "Baixar Convertida",
+    "privacy_guaranteed": "Privacidade Garantida",
+    "privacy_desc": "As imagens são processadas localmente. Nenhum dado sai do seu dispositivo.",
+    "converting_heic": "Convertendo HEIC para JPEG...",
+    "rendering_pdf": "Renderizando página PDF...",
+    "error_too_large": "A imagem é muito grande. Tamanho máximo de 25MB.",
+    "error_pdf_fail": "Falha ao processar arquivo PDF.",
+    "error_heic_fail": "Falha ao processar arquivo HEIC.",
+    "aspect_custom": "Personalizado (Livre)",
+    "hold_compare": "Segure para Comparar",
+    "preparing": "Preparando..."
+  },
+  "home": {
+    "hero_title": "Otimize suas Imagens com o ImagNinja",
+    "hero_desc": "A maneira mais rápida e segura de comprimir e converter suas imagens. Sem uploads, sem servidores, apenas privacidade.",
+    "features": {
+      "privacy": "Privacidade em Primeiro Lugar",
+      "privacy_desc": "Suas imagens nunca são enviadas para nenhum servidor. Todo o processamento é feito localmente via Web Canvas API.",
+      "feedback": "Feedback Instantâneo",
+      "feedback_desc": "Veja o tamanho exato do arquivo e o resultado visual enquanto ajusta a qualidade e dimensões em tempo real.",
+      "tools": "Ferramentas Integradas",
+      "tools_desc": "Corte em proporções populares ou redimensione para dimensões exatas de pixels sem sair do app."
+    }
+  }
+}

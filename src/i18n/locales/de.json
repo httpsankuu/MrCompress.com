@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "compress": "Komprimieren",
+    "convert": "Konvertieren",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "privacy": "Datenschutz"
+  },
+  "footer": {
+    "rights": "Alle Rechte vorbehalten."
+  },
+  "optimizer": {
+    "compress_tab": "Bild komprimieren",
+    "convert_tab": "Format konvertieren",
+    "upload_text": "Klicken zum Hochladen oder per Drag & Drop",
+    "upload_hint": "PNG, JPG, WebP, HEIC oder PDF (max. 25 MB)",
+    "upload_sr": "Bild hochladen",
+    "done_editing": "Fertig",
+    "crop_rotate": "Zuschneiden & Drehen",
+    "reset": "Zurücksetzen",
+    "original": "Original",
+    "optimized": "Optimiert",
+    "quality": "Bildqualität",
+    "small": "KLEIN",
+    "best": "BESTE",
+    "output_format": "Ausgabeformat",
+    "dimensions": "Maße",
+    "lock_aspect": "Seitenverhältnis sperren",
+    "width": "Breite",
+    "height": "Höhe",
+    "download_compressed": "Komprimiert herunterladen",
+    "download_converted": "Konvertiert herunterladen",
+    "privacy_guaranteed": "Datenschutz garantiert",
+    "privacy_desc": "Bilder werden lokal verarbeitet. Es verlassen keine Daten Ihr Gerät.",
+    "converting_heic": "Konvertiere HEIC zu JPEG...",
+    "rendering_pdf": "Render PDF-Seite...",
+    "error_too_large": "Bild ist zu groß. Maximale Größe ist 25 MB.",
+    "error_pdf_fail": "PDF-Datei konnte nicht verarbeitet werden.",
+    "error_heic_fail": "HEIC-Datei konnte nicht verarbeitet werden.",
+    "aspect_custom": "Benutzerdefiniert (Frei)",
+    "hold_compare": "Gedrückt halten zum Vergleichen",
+    "preparing": "Vorbereitung..."
+  },
+  "home": {
+    "hero_title": "Optimieren Sie Ihre Bilder mit ImagNinja",
+    "hero_desc": "Der schnellste und sicherste Weg, Ihre Bilder zu komprimieren und zu konvertieren. Keine Uploads, keine Server, nur Privatsphäre.",
+    "features": {
+      "privacy": "Privatsphäre zuerst",
+      "privacy_desc": "Ihre Bilder werden niemals auf einen Server hochgeladen. Die gesamte Verarbeitung erfolgt lokal über die Web Canvas API.",
+      "feedback": "Sofortiges Feedback",
+      "feedback_desc": "Sehen Sie die exakte Dateigröße und das visuelle Ergebnis in Echtzeit, während Sie Qualität und Maße anpassen.",
+      "tools": "Integrierte Tools",
+      "tools_desc": "Schneiden Sie auf gängige Seitenverhältnisse zu oder ändern Sie die Größe auf exakte Pixelmaße, ohne die App zu verlassen."
+    }
+  }
+}

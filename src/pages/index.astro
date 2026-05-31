@@ -1,194 +1,31 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Optimizer from '../components/Optimizer';
+import Hero from '../components/Hero';
 ---
 
 <Layout 
-	title="Compress Image Online - Reduce Image Size Without Losing Quality"
-	description="Compress image size online for free. Learn how to compress image to 100kb, 50kb, or 20kb easily. Secure, local, and fast image ninja for all your needs."
-	keywords="compress image, compress image size, compress image online, compress image file, compress image free, compress image without losing quality, compress image to 2mb, how to compress image, compress image to 100kb, compress image to 50kb, compress image to 200kb, compress image to 20kb, how to compress image on iphone"
+	title="ImagNinja - Fast, Secure & Free Online Image Optimizer"
+	description="Compress and convert images online without losing quality. Support for PNG, JPG, WebP, AVIF, HEIC and PDF. All processing happens locally in your browser."
 >
-	<script type="application/ld+json" slot="head">
-		{
-			"@context": "https://schema.org",
-			"@type": "FAQPage",
-			"mainEntity": [
-				{
-					"@type": "Question",
-					"name": "How to compress an image?",
-					"acceptedAnswer": {
-						"@type": "Answer",
-						"text": "To compress an image, simply drag and drop your file into our optimizer. Adjust the quality slider to find the perfect balance between file size and clarity, then click the download button. Everything happens locally in your browser for maximum privacy."
-					}
-				},
-				{
-					"@type": "Question",
-					"name": "How to compress image size?",
-					"acceptedAnswer": {
-						"@type": "Answer",
-						"text": "You can compress image size by reducing the quality percentage or by resizing the image's pixel dimensions. Our tool shows you a live preview of the final file size so you can achieve the exact optimization you need."
-					}
-				},
-				{
-					"@type": "Question",
-					"name": "How to compress image on iPhone?",
-					"acceptedAnswer": {
-						"@type": "Answer",
-						"text": "To compress an image on an iPhone, open our website in Safari, upload a photo from your library, adjust the settings as needed, and save the optimized image directly back to your Photos app. No extra apps required."
-					}
-				},
-				{
-					"@type": "Question",
-					"name": "How to compress image without losing quality?",
-					"acceptedAnswer": {
-						"@type": "Answer",
-						"text": "To compress an image without losing quality, use our advanced algorithms that remove unnecessary metadata and redundant pixel data. While 'lossless' compression is available, even our 'lossy' settings are designed to be visually indistinguishable from the original."
-					}
-				},
-				{
-					"@type": "Question",
-					"name": "How to compress image file size?",
-					"acceptedAnswer": {
-						"@type": "Answer",
-						"text": "Reducing image file size is easy: select your file, choose a modern format like WebP or AVIF for better compression ratios, and lower the quality slider until you reach your target size."
-					}
-				},
-				{
-					"@type": "Question",
-					"name": "How to compress an image on Mac?",
-					"acceptedAnswer": {
-						"@type": "Answer",
-						"text": "On a Mac, you can compress an image by using our online tool in any browser. It's a faster alternative to using built-in tools like Preview, especially when you need to convert formats or target specific file sizes."
-					}
-				},
-				{
-					"@type": "Question",
-					"name": "How to compress a image?",
-					"acceptedAnswer": {
-						"@type": "Answer",
-						"text": "Use our free online image ninja to compress a image instantly. Upload your file, choose your compression level, and download the result. We support JPEG, PNG, WebP, and AVIF formats."
-					}
-				},
-				{
-					"@type": "Question",
-					"name": "Compress image to 20kb?",
-					"acceptedAnswer": {
-						"@type": "Answer",
-						"text": "To compress an image to 20kb, you may need to reduce the dimensions (width and height) and lower the quality setting. Our real-time size counter helps you see exactly when you've reached the 20kb threshold."
-					}
-				}
-			]
-		}
-	</script>
-	<section class="relative overflow-hidden pt-20 pb-12 sm:pt-32">
-		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-			<h1 class="text-4xl font-bold tracking-tight text-ink sm:text-6xl mb-6">
-				Compress image files with<br />
-				<span class="bg-gradient-to-r from-geist-link to-cyan-deep bg-clip-text text-transparent">zero server processing.</span>
-			</h1>
-			<p class="mx-auto max-w-2xl text-lg text-body mb-10 leading-relaxed">
-				The fastest way to compress, crop, and resize your images. 
-				Everything happens right in your browser. Private, secure, and instant.
-			</p>
-			<div class="flex items-center justify-center gap-4">
-				<a href="/compress" class="flex items-center gap-2 rounded-geist-pill bg-ink px-6 py-2.5 text-sm font-semibold text-canvas shadow-v-4 transition-all hover:opacity-90">
-					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
-					Compress Image
-				</a>
-				<a href="/convert" class="flex items-center gap-2 rounded-geist-pill border border-hairline bg-canvas px-6 py-2.5 text-sm font-semibold text-ink shadow-v-1 transition-all hover:bg-canvas-soft">
-					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right-left"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
-					Convert Format
-				</a>
-			</div>
-		</div>
-	</section>
+	<Hero client:only="react" />
 
-	<section class="py-24 border-t border-hairline">
-		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-			<div class="grid grid-cols-1 gap-12 sm:grid-cols-3">
-				<div class="space-y-4">
-					<div class="h-10 w-10 rounded-geist bg-ink flex items-center justify-center shadow-v-2">
-						<svg class="h-5 w-5 text-canvas" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-						</svg>
-					</div>
-					<h3 class="text-sm font-bold text-ink">Privacy First</h3>
-					<p class="text-xs text-body leading-relaxed">Your images are never uploaded to any server. All processing is done locally via the Web Canvas API.</p>
-				</div>
-				<div class="space-y-4">
-					<div class="h-10 w-10 rounded-geist bg-ink flex items-center justify-center shadow-v-2">
-						<svg class="h-5 w-5 text-canvas" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-						</svg>
-					</div>
-					<h3 class="text-sm font-bold text-ink">Instant Feedback</h3>
-					<p class="text-xs text-body leading-relaxed">See the exact file size and visual result as you adjust quality and dimensions in real-time.</p>
-				</div>
-				<div class="space-y-4">
-					<div class="h-10 w-10 rounded-geist bg-ink flex items-center justify-center shadow-v-2">
-						<svg class="h-5 w-5 text-canvas" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v14a2 2 0 002 2z" />
-						</svg>
-					</div>
-					<h3 class="text-sm font-bold text-ink">Integrated Tools</h3>
-					<p class="text-xs text-body leading-relaxed">Crop to popular aspect ratios or resize to exact pixel dimensions without leaving the app.</p>
-				</div>
-			</div>
-		</div>
+	<section id="tool" class="pb-24">
+		<Optimizer client:only="react" />
 	</section>
 
 	<section class="py-24 border-t border-hairline bg-canvas-soft/30">
-		<div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-			<div class="prose prose-sm max-w-none text-body">
-				<h2 class="text-3xl font-bold text-ink mb-8 text-center">Compress Image: The Ultimate Guide to Optimizing Your Visuals</h2>
-				
-				<p class="mb-6 leading-relaxed">
-					In today's fast-paced digital landscape, the need to <strong>compress image</strong> files has never been more critical. Whether you're a professional photographer, a web developer, or just someone looking to save space on their device, understanding how to effectively <strong>compress image size</strong> can significantly impact your workflow and user experience. High-resolution images are beautiful and essential for capturing attention, but they often come with large file sizes that can slow down websites, increase bandwidth costs, and take up valuable storage on your computer or smartphone.
+		<div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
+			<h2 class="text-3xl font-bold text-ink mb-8">Optimize Your Images with ImagNinja</h2>
+			<div class="max-w-3xl mx-auto text-body leading-relaxed space-y-6 text-lg">
+				<p>
+					In today's fast-paced digital world, speed is everything. High-resolution images are essential for capturing attention, but their large file sizes can slow down your website and consume valuable storage. <strong>ImagNinja</strong> is designed to solve this problem by providing a fast, secure, and intuitive way to <strong>compress images</strong> without sacrificing quality.
 				</p>
-
-				<p class="mb-6 leading-relaxed">
-					When you choose to <strong>compress image online</strong>, you're taking a proactive step toward better performance. A well-optimized image is the backbone of a fast website. Research shows that even a one-second delay in page load time can lead to a significant drop in conversions and user satisfaction. By using a high-quality tool like <strong>ImagNinja</strong>, you can ensure that your visuals are as lean as possible without sacrificing the aesthetic quality that makes your brand or project stand out.
+				<p>
+					Our tool uses advanced algorithms to surgically remove redundant data, allowing you to <strong>compress image size</strong> to 100kb, 50kb, or even 20kb with ease. Whether you're optimizing for SEO, social media, or saving space on your iPhone, ImagNinja handles everything locally in your browser. This means your private photos stay private and the processing is near-instant.
 				</p>
-
-				<h3 class="text-xl font-bold text-ink mt-10 mb-4">Why You Need to Compress Image Online</h3>
-				<p class="mb-6 leading-relaxed">
-					Using an online tool to <strong>compress image file</strong> data is often the most convenient way to handle bulk optimization. This process is vital for web optimization because search engines like Google prioritize fast-loading sites. When you <strong>compress image free</strong> of charge using our platform, you're not just saving money; you're also improving your site's SEO ranking. Our tool allows you to perform these tasks instantly, providing a high-quality solution accessible to everyone from beginners to seasoned professionals.
-				</p>
-
-				<h3 class="text-xl font-bold text-ink mt-10 mb-4">How to Compress Image Without Losing Quality</h3>
-				<p class="mb-6 leading-relaxed">
-					Many people worry that if they <strong>compress image without losing quality</strong>, they might end up with blurry or pixelated results. However, modern compression technology has come a long way. Our tool uses smart algorithms to identify and remove redundant data that the human eye can't even see. Whether you need to <strong>compress image to 2mb</strong> for a professional portfolio or <strong>compress image to 100kb</strong> for a quick social media update, our platform handles the task with surgical precision, maintaining the sharpness and color accuracy of your original photo.
-				</p>
-
-				<h3 class="text-xl font-bold text-ink mt-10 mb-4">A Step-by-Step Guide: How to Compress Image</h3>
-				<p class="mb-4">If you're wondering <strong>how to compress image</strong> files using our intuitive interface, here is the simple process:</p>
-				<ul class="list-disc pl-6 mb-6 space-y-2 leading-relaxed">
-					<li><strong>Upload:</strong> Simply drag and drop your files or select them from your folder. We support various formats including JPEG, PNG, WebP, and AVIF.</li>
-					<li><strong>Adjust:</strong> Use our real-time quality slider to find the perfect balance between file size and visual clarity. You can also resize the image to specific pixel dimensions.</li>
-					<li><strong>Preview:</strong> Our live preview feature shows you exactly how the compressed image looks and what the final file size will be before you even hit download.</li>
-					<li><strong>Download:</strong> Once you're satisfied, click the download button to save your newly optimized images directly to your device.</li>
-				</ul>
-
-				<h3 class="text-xl font-bold text-ink mt-10 mb-4">Target Specific File Sizes for Every Platform</h3>
-				<p class="mb-4">Different platforms have different requirements. Our tool makes it incredibly easy to hit those specific targets:</p>
-				<ul class="list-disc pl-6 mb-6 space-y-2 leading-relaxed">
-					<li><strong>Compress image to 100kb</strong>: This is the gold standard for most web forms and profile pictures on social media.</li>
-					<li><strong>Compress image to 50kb</strong>: Ideal for website favicons, small thumbnails, or decorative icons where speed is the priority.</li>
-					<li><strong>Compress image to 200kb</strong>: A great middle-ground for blog post headers and high-quality article images.</li>
-					<li><strong>Compress image to 20kb</strong>: Necessary for highly optimized web assets like background patterns or simple graphics.</li>
-				</ul>
-
-				<h3 class="text-xl font-bold text-ink mt-10 mb-4">Mobile Optimization: How to Compress Image on iPhone</h3>
-				<p class="mb-6 leading-relaxed">
-					Mobile devices capture incredible photos, but they are often massive. If you've ever tried to email a photo and been told the file is too large, you know the frustration. Many users ask <strong>how to compress image on iphone</strong> without downloading bulky apps. Our website is designed with a mobile-first approach. You can navigate to our site from Safari or Chrome on your iPhone, upload your photos, <strong>compress image size</strong> on the fly, and save them directly back to your camera roll. It's the most efficient way to manage your mobile storage.
-				</p>
-
-				<h3 class="text-xl font-bold text-ink mt-10 mb-4">Privacy, Security, and Speed</h3>
-				<p class="mb-6 leading-relaxed">
-					What sets us apart from other tools is our commitment to privacy. When you <strong>compress image</strong> files on our site, we don't upload them to any server. All the heavy lifting is done locally within your browser using the Web Canvas API and Web Workers. This means your private photos stay private. It also means the compression is incredibly fast because there's no upload or download lag. It's the safest, fastest, and most reliable way to <strong>compress image online</strong> today.
-				</p>
-
-				<p class="mb-6 leading-relaxed">
-					In conclusion, mastering the art of image compression is essential for anyone who deals with digital content. From improving your website's performance to saving space on your iPhone, our tool provides all the features you need to <strong>compress image size</strong> effectively. Start optimizing today and see the difference that a few kilobytes can make!
+				<p>
+					From bulk conversion to precision cropping, we provide the features you need to maintain visual clarity while achieving maximum performance. Start optimizing today and see how a few kilobytes can make a massive difference.
 				</p>
 			</div>
 		</div>
@@ -223,8 +60,8 @@ import Layout from '../layouts/Layout.astro';
 					<p class="text-sm text-body leading-relaxed">On a Mac, you can compress an image by using our online tool in any browser. It's a faster alternative to using built-in tools like Preview, especially when you need to convert formats or target specific file sizes.</p>
 				</div>
 				<div>
-					<h3 class="text-lg font-bold text-ink mb-2">How to compress a image?</h3>
-					<p class="text-sm text-body leading-relaxed">Use our free online image ninja to compress a image instantly. Upload your file, choose your compression level, and download the result. We support JPEG, PNG, WebP, and AVIF formats.</p>
+					<h3 class="text-lg font-bold text-ink mb-2">How to compress an image?</h3>
+					<p class="text-sm text-body leading-relaxed">Use our free online image ninja to compress an image instantly. Upload your file, choose your compression level, and download the result. We support JPEG, PNG, WebP, and AVIF formats.</p>
 				</div>
 				<div>
 					<h3 class="text-lg font-bold text-ink mb-2">Compress image to 20kb?</h3>
@@ -233,6 +70,4 @@ import Layout from '../layouts/Layout.astro';
 			</div>
 		</div>
 	</section>
-</Layout>
-on>
 </Layout>

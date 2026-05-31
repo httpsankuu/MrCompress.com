@@ -1,0 +1,54 @@
+{
+  "nav": {
+    "compress": "Compress",
+    "convert": "Convert",
+    "about": "About",
+    "contact": "Contact",
+    "privacy": "Privacy"
+  },
+  "footer": {
+    "rights": "All rights reserved."
+  },
+  "optimizer": {
+    "compress_tab": "Compress Image",
+    "convert_tab": "Convert Format",
+    "upload_text": "Click to upload or drag and drop",
+    "upload_hint": "PNG, JPG, WebP, HEIC or PDF (max. 25MB)",
+    "upload_sr": "Upload image",
+    "done_editing": "Done Editing",
+    "crop_rotate": "Crop & Rotate",
+    "reset": "Reset",
+    "original": "Original",
+    "optimized": "Optimized",
+    "quality": "Image Quality",
+    "small": "SMALL",
+    "best": "BEST",
+    "output_format": "Output Format",
+    "dimensions": "Dimensions",
+    "lock_aspect": "Lock Aspect",
+    "width": "Width",
+    "height": "Height",
+    "download_compressed": "Download Compressed",
+    "download_converted": "Download Converted",
+    "privacy_guaranteed": "Privacy Guaranteed",
+    "privacy_desc": "Images are processed locally. No data ever leaves your device.",
+    "converting_heic": "Converting HEIC to JPEG...",
+    "rendering_pdf": "Rendering PDF page...",
+    "error_too_large": "Image is too large. Max size is 25MB.",
+    "error_pdf_fail": "Failed to process PDF file.",
+    "error_heic_fail": "Failed to process HEIC file.",
+    "aspect_custom": "Custom (Free)"
+  },
+  "home": {
+    "hero_title": "Optimize Your Images with ImagNinja",
+    "hero_desc": "The fastest, most secure way to compress and convert your images. No uploads, no servers, just privacy.",
+    "features": {
+      "privacy": "Privacy First",
+      "privacy_desc": "Your images are never uploaded to any server. All processing is done locally via the Web Canvas API.",
+      "feedback": "Instant Feedback",
+      "feedback_desc": "See the exact file size and visual result as you adjust quality and dimensions in real-time.",
+      "tools": "Integrated Tools",
+      "tools_desc": "Crop to popular aspect ratios or resize to exact pixel dimensions without leaving the app."
+    }
+  }
+}

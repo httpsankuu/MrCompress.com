@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "compress": "圧縮",
+    "convert": "変換",
+    "about": "詳細",
+    "contact": "お問い合わせ",
+    "privacy": "プライバシー"
+  },
+  "footer": {
+    "rights": "無断複写・転載を禁じます。"
+  },
+  "optimizer": {
+    "compress_tab": "画像を圧縮",
+    "convert_tab": "形式を変換",
+    "upload_text": "クリックしてアップロード、またはドラッグ＆ドロップ",
+    "upload_hint": "PNG, JPG, WebP, HEIC または PDF (最大 25MB)",
+    "upload_sr": "画像をアップロード",
+    "done_editing": "編集完了",
+    "crop_rotate": "切り抜きと回転",
+    "reset": "リセット",
+    "original": "元画像",
+    "optimized": "最適化後",
+    "quality": "画質",
+    "small": "最小",
+    "best": "最高",
+    "output_format": "出力形式",
+    "dimensions": "サイズ",
+    "lock_aspect": "比率を固定",
+    "width": "幅",
+    "height": "高さ",
+    "download_compressed": "圧縮画像をダウンロード",
+    "download_converted": "変換画像をダウンロード",
+    "privacy_guaranteed": "プライバシー保証",
+    "privacy_desc": "画像はローカルで処理されます。データがデバイスの外に出ることはありません。",
+    "converting_heic": "HEICをJPEGに変換中...",
+    "rendering_pdf": "PDFページをレンダリング中...",
+    "error_too_large": "画像が大きすぎます。最大25MBまでです。",
+    "error_pdf_fail": "PDFファイルの処理に失敗しました。",
+    "error_heic_fail": "HEICファイルの処理に失敗しました。",
+    "aspect_custom": "カスタム (自由)",
+    "hold_compare": "長押しで比較",
+    "preparing": "準備中..."
+  },
+  "home": {
+    "hero_title": "ImagNinjaで画像を最適化",
+    "hero_desc": "画像を圧縮・変換するための最も速く安全な方法。アップロード不要、サーバー不要、プライバシーを重視。",
+    "features": {
+      "privacy": "プライバシー第一",
+      "privacy_desc": "画像がサーバーにアップロードされることはありません。すべての処理はWeb Canvas APIを介してローカルで行われます。",
+      "feedback": "即座にフィードバック",
+      "feedback_desc": "画質やサイズを調整しながら、正確なファイルサイズと見た目の結果をリアルタイムで確認できます。",
+      "tools": "統合ツール",
+      "tools_desc": "アプリを離れることなく、一般的なアスペクト比に切り抜いたり、正確なピクセル単位でリサイズしたりできます。"
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "compress": "Compresser",
+    "convert": "Convertir",
+    "about": "À propos",
+    "contact": "Contact",
+    "privacy": "Confidentialité"
+  },
+  "footer": {
+    "rights": "Tous droits réservés."
+  },
+  "optimizer": {
+    "compress_tab": "Compresser l'image",
+    "convert_tab": "Convertir le format",
+    "upload_text": "Cliquez pour télécharger ou glisser-déposer",
+    "upload_hint": "PNG, JPG, WebP, HEIC ou PDF (max. 25 Mo)",
+    "upload_sr": "Télécharger une image",
+    "done_editing": "Terminé",
+    "crop_rotate": "Recadrer & Pivoter",
+    "reset": "Réinitialiser",
+    "original": "Original",
+    "optimized": "Optimisé",
+    "quality": "Qualité de l'image",
+    "small": "PETIT",
+    "best": "MEILLEUR",
+    "output_format": "Format de sortie",
+    "dimensions": "Dimensions",
+    "lock_aspect": "Verrouiller le ratio",
+    "width": "Largeur",
+    "height": "Hauteur",
+    "download_compressed": "Télécharger compressé",
+    "download_converted": "Télécharger converti",
+    "privacy_guaranteed": "Confidentialité garantie",
+    "privacy_desc": "Les images sont traitées localement. Aucune donnée ne quitte votre appareil.",
+    "converting_heic": "Conversion de HEIC en JPEG...",
+    "rendering_pdf": "Rendu de la page PDF...",
+    "error_too_large": "L'image est trop grande. Taille max. 25 Mo.",
+    "error_pdf_fail": "Échec du traitement du fichier PDF.",
+    "error_heic_fail": "Échec du traitement du fichier HEIC.",
+    "aspect_custom": "Personnalisé (Libre)",
+    "hold_compare": "Maintenir pour comparer",
+    "preparing": "Préparation..."
+  },
+  "home": {
+    "hero_title": "Optimisez vos images avec ImagNinja",
+    "hero_desc": "Le moyen le plus rapide et le plus sûr de compresser et convertir vos images. Pas de téléchargement, pas de serveurs, juste de la confidentialité.",
+    "features": {
+      "privacy": "Confidentialité d'abord",
+      "privacy_desc": "Vos images ne sont jamais téléchargées sur un serveur. Tout le traitement est effectué localement via l'API Web Canvas.",
+      "feedback": "Retour instantané",
+      "feedback_desc": "Voyez la taille exacte du fichier et le résultat visuel pendant que vous ajustez la qualité et les dimensions en temps réel.",
+      "tools": "Outils intégrés",
+      "tools_desc": "Recadrez aux formats populaires ou redimensionnez aux dimensions exactes en pixels sans quitter l'application."
+    }
+  }
+}

@@ -7,12 +7,17 @@ import { twMerge } from 'tailwind-merge';
 import heic2any from 'heic2any';
 import { jsPDF } from 'jspdf';
 import * as pdfjsLib from 'pdfjs-dist';
+import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import '../i18n';
 
 // Use local worker from node_modules via Vite ?url
 // @ts-ignore
 import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
+if (typeof window !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
+}
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -35,29 +40,8 @@ interface CropArea {
   height: number;
 }
 
-const ASPECT_RATIOS = [
-  { label: 'Custom (Free)', value: undefined },
-  { label: '1:1', value: 1 },
-  { label: '4:5', value: 0.8, description: 'IG Post' },
-  { label: '4:3', value: 4 / 3 },
-  { label: '3:4', value: 3 / 4 },
-  { label: '3:2', value: 3 / 2 },
-  { label: '16:9', value: 16 / 9 },
-  { label: '9:16', value: 9 / 16, description: 'Story/TikTok' },
-  { label: '5:4', value: 5 / 4 },
-  { label: '2:1', value: 2 },
-];
-
-const OUTPUT_FORMATS = [
-  { label: 'Original', value: 'original' },
-  { label: 'JPEG', value: 'image/jpeg' },
-  { label: 'PNG', value: 'image/png' },
-  { label: 'WebP', value: 'image/webp' },
-  { label: 'AVIF', value: 'image/avif' },
-  { label: 'PDF', value: 'application/pdf' },
-];
-
 export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'compress' | 'convert' }) {
+  const { t } = useTranslation();
   const [image, setImage] = useState<ImageState | null>(null);
   const [quality, setQuality] = useState(80);
   const [targetWidth, setTargetWidth] = useState<number>(0);
@@ -81,6 +65,30 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
   const [isConvertingHeic, setIsConvertingHeic] = useState(false);
   const [isConvertingPdf, setIsConvertingPdf] = useState(false);
   const [activeTab, setActiveTab] = useState<'compress' | 'convert'>(initialTab);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isComparing, setIsComparing] = useState(false);
+
+  const ASPECT_RATIOS = [
+    { label: t('optimizer.aspect_custom', 'Custom (Free)'), value: undefined },
+    { label: '1:1', value: 1 },
+    { label: '4:5', value: 0.8, description: 'IG Post' },
+    { label: '4:3', value: 4 / 3 },
+    { label: '3:4', value: 3 / 4 },
+    { label: '3:2', value: 3 / 2 },
+    { label: '16:9', value: 16 / 9 },
+    { label: '9:16', value: 9 / 16, description: 'Story/TikTok' },
+    { label: '5:4', value: 5 / 4 },
+    { label: '2:1', value: 2 },
+  ];
+
+  const OUTPUT_FORMATS = [
+    { label: t('optimizer.original', 'Original'), value: 'original' },
+    { label: 'JPEG', value: 'image/jpeg' },
+    { label: 'PNG', value: 'image/png' },
+    { label: 'WebP', value: 'image/webp' },
+    { label: 'AVIF', value: 'image/avif' },
+    { label: 'PDF', value: 'application/pdf' },
+  ];
 
   const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -91,7 +99,7 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
 
   const handleFile = async (file: File) => {
     if (file.size > 25 * 1024 * 1024) {
-      alert("Image is too large. Max size is 25MB.");
+      toast.error(t('optimizer.error_too_large'));
       return;
     }
 
@@ -107,10 +115,11 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
         const viewport = page.getViewport({ scale: 2 });
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
+        if (!context) throw new Error("Could not get context");
         canvas.height = viewport.height;
         canvas.width = viewport.width;
 
-        await page.render({ canvasContext: context!, viewport }).promise;
+        await page.render({ canvasContext: context, viewport }).promise;
         const dataUrl = canvas.toDataURL('image/png');
         
         setImage({
@@ -127,7 +136,7 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
         setRotation(0);
       } catch (err) {
         console.error("PDF processing failed", err);
-        alert("Failed to process PDF file.");
+        toast.error(t('optimizer.error_pdf_fail'));
       } finally {
         setIsConvertingPdf(false);
       }
@@ -143,10 +152,10 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
           toType: 'image/jpeg',
           quality: 0.8
         });
-        processingFile = Array.isArray(converted) ? converted[0] : converted;
+        processingFile = Array.isArray(converted) ? converted[0] : (converted as File);
       } catch (err) {
         console.error("HEIC conversion failed", err);
-        alert("Failed to process HEIC file.");
+        toast.error(t('optimizer.error_heic_fail'));
         setIsConvertingHeic(false);
         return;
       }
@@ -212,10 +221,6 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
     if (!image) return;
     setIsProcessing(true);
 
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
     const img = new Image();
     img.src = image.preview;
     
@@ -223,10 +228,30 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
       img.onload = resolve;
     });
 
+    // 1. Create a source canvas that handles rotation
+    const sourceCanvas = document.createElement('canvas');
+    const sCtx = sourceCanvas.getContext('2d');
+    if (!sCtx) return;
+
+    const absRotation = Math.abs(rotation) % 360;
+    const is90 = absRotation === 90 || absRotation === 270;
+    
+    sourceCanvas.width = is90 ? image.height : image.width;
+    sourceCanvas.height = is90 ? image.width : image.height;
+
+    sCtx.translate(sourceCanvas.width / 2, sourceCanvas.height / 2);
+    sCtx.rotate((rotation * Math.PI) / 180);
+    sCtx.drawImage(img, -image.width / 2, -image.height / 2);
+
+    // 2. Final canvas for crop & resize
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
     let sourceX = 0;
     let sourceY = 0;
-    let sourceWidth = image.width;
-    let sourceHeight = image.height;
+    let sourceWidth = sourceCanvas.width;
+    let sourceHeight = sourceCanvas.height;
 
     if (croppedAreaPixels) {
       sourceX = croppedAreaPixels.x;
@@ -238,15 +263,8 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
     canvas.width = targetWidth;
     canvas.height = targetHeight;
 
-    // Apply rotation
-    if (rotation !== 0) {
-      ctx.translate(canvas.width / 2, canvas.height / 2);
-      ctx.rotate((rotation * Math.PI) / 180);
-      ctx.translate(-canvas.width / 2, -canvas.height / 2);
-    }
-
     ctx.drawImage(
-      img,
+      sourceCanvas,
       sourceX, sourceY, sourceWidth, sourceHeight,
       0, 0, targetWidth, targetHeight
     );
@@ -279,7 +297,7 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
       targetType,
       quality / 100
     );
-  }, [image, quality, targetWidth, targetHeight, completedCrop, outputFormat, rotation]);
+  }, [image, quality, targetWidth, targetHeight, croppedAreaPixels, outputFormat, rotation]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -296,9 +314,13 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
     }
   }, [compressedBlob]);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!compressedBlob || !image) return;
+    setIsDownloading(true);
     
+    // Brief delay to show loading state
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     const baseName = image.file.name.substring(0, image.file.name.lastIndexOf('.')) || image.file.name;
     const mimeToExt: Record<string, string> = {
       'image/jpeg': 'jpg',
@@ -317,19 +339,16 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    setIsDownloading(false);
   };
 
   const formatSize = (bytes: number) => {
     if (!bytes || bytes <= 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    try {
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      if (i < 0) return '0 Bytes';
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    } catch (e) {
-      return '0 Bytes';
-    }
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    if (i < 0) return '0 Bytes';
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   return (
@@ -338,7 +357,7 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-canvas/80 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-4">
             <div className="h-10 w-10 animate-spin rounded-full border-2 border-hairline border-t-ink"></div>
-            <p className="text-sm font-medium text-ink">Converting HEIC to JPEG...</p>
+            <p className="text-sm font-medium text-ink">{t('optimizer.converting_heic')}</p>
           </div>
         </div>
       )}
@@ -347,7 +366,7 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-canvas/80 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-4">
             <div className="h-10 w-10 animate-spin rounded-full border-2 border-hairline border-t-ink"></div>
-            <p className="text-sm font-medium text-ink">Rendering PDF page...</p>
+            <p className="text-sm font-medium text-ink">{t('optimizer.rendering_pdf')}</p>
           </div>
         </div>
       )}
@@ -364,7 +383,7 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
                 )}
               >
                 <Sliders className="h-3.5 w-3.5" />
-                Compress Image
+                {t('optimizer.compress_tab')}
               </button>
               <button 
                 onClick={() => setActiveTab('convert')}
@@ -374,26 +393,28 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
                 )}
               >
                 <ArrowRightLeft className="h-3.5 w-3.5" />
-                Convert Format
+                {t('optimizer.convert_tab')}
               </button>
             </div>
 
             {!image ? (
-              <div 
+              <button 
+                type="button"
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => {
                   e.preventDefault();
                   const file = e.dataTransfer.files[0];
                   if (file) handleFile(file);
                 }}
-                className="group relative flex aspect-[16/9] cursor-pointer flex-col items-center justify-center bg-canvas transition-all hover:bg-canvas-soft-2 p-12"
+                className="group relative flex aspect-[16/9] w-full cursor-pointer flex-col items-center justify-center bg-canvas transition-all hover:bg-canvas-soft-2 p-12 touch-manipulation"
                 onClick={() => document.getElementById('fileInput')?.click()}
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft shadow-v-1 transition-transform group-hover:scale-110">
                   <Upload className="h-6 w-6 text-mute" />
                 </div>
-                <p className="mt-4 text-sm font-medium text-ink">Click to upload or drag and drop</p>
-                <p className="mt-1 text-xs text-mute">PNG, JPG, WebP, HEIC or PDF (max. 25MB)</p>
+                <p className="mt-4 text-sm font-medium text-ink">{t('optimizer.upload_text')}</p>
+                <p className="mt-1 text-xs text-mute">{t('optimizer.upload_hint')}</p>
+                <label htmlFor="fileInput" className="sr-only">{t('optimizer.upload_sr')}</label>
                 <input 
                   id="fileInput" 
                   type="file" 
@@ -401,7 +422,7 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
                   accept="image/*,.heic,.heif,.pdf,application/pdf" 
                   onChange={onSelectFile} 
                 />
-              </div>
+              </button>
             ) : (
               <>
                 <div className="flex h-10 items-center justify-between bg-canvas-soft/50 px-4 border-b border-hairline">
@@ -460,11 +481,25 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
                   ) : (
                     <div className="relative max-h-full transition-all duration-300">
                       <img 
-                        src={previewUrl || image.preview} 
+                        src={isComparing ? image.preview : (previewUrl || image.preview)} 
                         alt="Preview" 
                         className="max-h-[450px] max-w-full object-contain shadow-v-2 rounded-sm"
-                        style={!previewUrl ? { transform: `rotate(${rotation}deg)` } : {}}
+                        style={(!previewUrl || isComparing) ? { transform: `rotate(${rotation}deg)` } : {}}
                       />
+                      {previewUrl && !isCropping && (
+                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
+                          <button
+                            onMouseDown={() => setIsComparing(true)}
+                            onMouseUp={() => setIsComparing(false)}
+                            onMouseLeave={() => setIsComparing(false)}
+                            onTouchStart={() => setIsComparing(true)}
+                            onTouchEnd={() => setIsComparing(false)}
+                            className="bg-ink/80 backdrop-blur-md text-canvas px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-v-4 select-none touch-none active:scale-95 transition-transform"
+                          >
+                            {t('optimizer.hold_compare', 'Hold to Compare')}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -480,7 +515,7 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
                         )}
                       >
                         <Scissors className="h-4 w-4" />
-                        {isCropping ? "Done Editing" : "Crop & Rotate"}
+                        {isCropping ? t('optimizer.done_editing') : t('optimizer.crop_rotate')}
                       </button>
                       
                       {isCropping && (
@@ -506,7 +541,7 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
                             className="flex items-center gap-2 rounded-md px-3 py-1.5 text-[10px] font-bold text-mute hover:text-ink hover:bg-canvas-soft transition-all"
                           >
                             <RotateCcw className="h-3.5 w-3.5" />
-                            Reset
+                            {t('optimizer.reset')}
                           </button>
                         </div>
                       )}
@@ -514,12 +549,12 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
 
                     <div className="flex items-center gap-8 bg-canvas-soft/80 rounded-xl px-6 py-3 border border-hairline">
                       <div className="flex flex-col">
-                        <span className="text-[10px] uppercase tracking-widest text-mute font-black opacity-60">Original</span>
+                        <span className="text-[10px] uppercase tracking-widest text-mute font-black opacity-60">{t('optimizer.original')}</span>
                         <span className="text-sm font-bold text-ink">{formatSize(image.originalSize)}</span>
                       </div>
                       <div className="h-8 w-px bg-hairline-strong/20" />
                       <div className="flex flex-col items-end text-right">
-                        <span className="text-[10px] uppercase tracking-widest text-mute font-black opacity-60">Optimized</span>
+                        <span className="text-[10px] uppercase tracking-widest text-mute font-black opacity-60">{t('optimizer.optimized')}</span>
                         <div className="flex items-center gap-3">
                           {compressedSize > 0 && (
                             <span className="text-[10px] font-black text-geist-success bg-geist-success/10 px-2 py-0.5 rounded-full border border-geist-success/20">
@@ -585,26 +620,27 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
                 {activeTab === 'compress' ? (
                   <div className="space-y-6">
                     <div className="flex items-center justify-between">
-                      <label className="text-xs font-medium text-ink">Image Quality</label>
+                      <label htmlFor="quality-slider" className="text-xs font-medium text-ink cursor-pointer">{t('optimizer.quality')}</label>
                       <span className="text-xs font-bold text-ink">{quality}%</span>
                     </div>
                     <input 
+                      id="quality-slider"
                       type="range" 
                       min="1" 
                       max="100" 
                       value={quality} 
                       disabled={!image}
                       onChange={(e) => setQuality(parseInt(e.target.value))}
-                      className="w-full disabled:opacity-30"
+                      className="w-full disabled:opacity-30 touch-manipulation"
                     />
                     <div className="flex justify-between text-[10px] text-mute font-mono">
-                      <span>SMALL</span>
-                      <span>BEST</span>
+                      <span>{t('optimizer.small')}</span>
+                      <span>{t('optimizer.best')}</span>
                     </div>
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <label className="text-xs font-medium text-ink">Output Format</label>
+                    <label className="text-xs font-medium text-ink">{t('optimizer.output_format')}</label>
                     <div className="grid grid-cols-2 gap-2">
                       {OUTPUT_FORMATS.map((format) => (
                         <button
@@ -627,7 +663,7 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
 
                 <div className="space-y-4 pt-4 border-t border-hairline">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-medium text-ink">Dimensions</label>
+                    <label className="text-xs font-medium text-ink">{t('optimizer.dimensions')}</label>
                     <div className="flex items-center gap-2">
                       <input 
                         type="checkbox" 
@@ -637,15 +673,16 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
                         onChange={(e) => setMaintainAspectRatio(e.target.checked)}
                         className="h-3 w-3 rounded-sm border-hairline accent-ink"
                       />
-                      <label htmlFor="aspect" className="text-[10px] text-mute cursor-pointer">Lock Aspect</label>
+                      <label htmlFor="aspect" className="text-[10px] text-mute cursor-pointer">{t('optimizer.lock_aspect')}</label>
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <span className="text-[10px] uppercase text-mute">Width</span>
+                      <label htmlFor="width-input" className="text-[10px] uppercase text-mute block font-medium">{t('optimizer.width')}</label>
                       <div className="relative">
                         <input 
+                          id="width-input"
                           type="number" 
                           value={targetWidth}
                           disabled={!image}
@@ -662,9 +699,10 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
                       </div>
                     </div>
                     <div className="space-y-1.5">
-                      <span className="text-[10px] uppercase text-mute">Height</span>
+                      <label htmlFor="height-input" className="text-[10px] uppercase text-mute block font-medium">{t('optimizer.height')}</label>
                       <div className="relative">
                         <input 
+                          id="height-input"
                           type="number" 
                           value={targetHeight}
                           disabled={!image}
@@ -685,14 +723,21 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
 
                 <button 
                   onClick={handleDownload}
-                  disabled={isProcessing || !compressedBlob || !image}
+                  disabled={isProcessing || isDownloading || !compressedBlob || !image}
                   className={cn(
                     "mt-4 flex w-full items-center justify-center gap-2 rounded-geist-pill py-3 text-sm font-semibold text-canvas shadow-v-4 transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30",
                     activeTab === 'compress' ? "bg-ink" : "bg-geist-link"
                   )}
                 >
-                  <Download className="h-4 w-4" />
-                  {activeTab === 'compress' ? "Download Compressed" : "Download Converted"}
+                  {isDownloading ? (
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-canvas/30 border-t-canvas"></div>
+                  ) : (
+                    <Download className="h-4 w-4" />
+                  )}
+                  {isDownloading 
+                    ? t('optimizer.preparing', 'Preparing...') 
+                    : (activeTab === 'compress' ? t('optimizer.download_compressed') : t('optimizer.download_converted'))
+                  }
                 </button>
               </div>
             </div>
@@ -703,8 +748,8 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
                   <Check className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-ink">Privacy Guaranteed</p>
-                  <p className="text-[10px] text-mute leading-relaxed">Images are processed locally. No data ever leaves your device.</p>
+                  <p className="text-xs font-semibold text-ink">{t('optimizer.privacy_guaranteed')}</p>
+                  <p className="text-[10px] text-mute leading-relaxed">{t('optimizer.privacy_desc')}</p>
                 </div>
               </div>
             </div>

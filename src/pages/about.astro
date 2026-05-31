@@ -7,22 +7,58 @@ import Layout from '../layouts/Layout.astro';
 	description="Learn how ImagNinja provides secure, local image compression and conversion. Everything happens in your browser, ensuring your privacy."
 >
 	<section class="py-24">
-		<div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-			<h1 class="text-4xl font-bold tracking-tight text-ink mb-8">About ImagNinja</h1>
-			<div class="prose prose-sm text-body">
-				<p class="mb-4">
-					ImagNinja is a privacy-focused tool built for developers and designers who need fast, local image processing.
+		<div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+			<h1 class="text-4xl font-bold tracking-tight text-ink mb-12 text-center">About ImagNinja</h1>
+			<div class="prose prose-sm max-w-none text-body">
+				<h2 class="text-2xl font-bold text-ink mb-6">Our Mission</h2>
+				<p class="mb-8 leading-relaxed text-lg">
+					ImagNinja was born out of a simple need: a fast, free, and secure way to optimize images without the fear of data being harvested or images being stored on unknown servers. We believe that privacy shouldn't be a premium feature.
 				</p>
-				<p class="mb-4">
-					Unlike other tools that upload your images to a server, everything here happens entirely in your browser using the Web Canvas API. This means your data never leaves your device, making it 100% secure and private.
-				</p>
-				<h2 class="text-xl font-bold text-ink mt-8 mb-4">Key Features</h2>
-				<ul class="list-disc pl-5 space-y-2">
-					<li>Local processing via Web Workers</li>
-					<li>No server-side data storage</li>
-					<li>Support for HEIC, PDF, and modern image formats</li>
-					<li>Real-time visual and size feedback</li>
-				</ul>
+
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-12 mt-16">
+					<div class="space-y-4">
+						<h3 class="text-xl font-bold text-ink">Modern Tech Stack</h3>
+						<p class="leading-relaxed">
+							We leverage the power of modern web technologies like <strong>Astro</strong>, <strong>React</strong>, and <strong>Tailwind CSS</strong> to provide a seamless user experience. By using the <strong>Web Canvas API</strong> and <strong>Web Workers</strong>, we perform complex image manipulations directly in your browser.
+						</p>
+					</div>
+					<div class="space-y-4">
+						<h3 class="text-xl font-bold text-ink">Privacy by Design</h3>
+						<p class="leading-relaxed">
+							Unlike other online tools, ImagNinja does not have a backend that handles your images. When you select a file, it never leaves your computer. This architecture ensures maximum speed and absolute privacy.
+						</p>
+					</div>
+				</div>
+
+				<div class="mt-16 p-8 rounded-2xl bg-canvas-soft border border-hairline shadow-v-1">
+					<h3 class="text-xl font-bold text-ink mb-6">Why Choose ImagNinja?</h3>
+					<ul class="grid grid-cols-1 sm:grid-cols-2 gap-6 list-none pl-0">
+						<li class="flex items-center gap-3">
+							<div class="h-6 w-6 rounded-full bg-geist-success/10 flex items-center justify-center">
+								<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-geist-success"><polyline points="20 6 9 17 4 12"/></svg>
+							</div>
+							<span class="font-medium">100% Client-Side Processing</span>
+						</li>
+						<li class="flex items-center gap-3">
+							<div class="h-6 w-6 rounded-full bg-geist-success/10 flex items-center justify-center">
+								<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-geist-success"><polyline points="20 6 9 17 4 12"/></svg>
+							</div>
+							<span class="font-medium">No Registration Required</span>
+						</li>
+						<li class="flex items-center gap-3">
+							<div class="h-6 w-6 rounded-full bg-geist-success/10 flex items-center justify-center">
+								<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-geist-success"><polyline points="20 6 9 17 4 12"/></svg>
+							</div>
+							<span class="font-medium">Supports HEIC & PDF to Image</span>
+						</li>
+						<li class="flex items-center gap-3">
+							<div class="h-6 w-6 rounded-full bg-geist-success/10 flex items-center justify-center">
+								<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-geist-success"><polyline points="20 6 9 17 4 12"/></svg>
+							</div>
+							<span class="font-medium">Completely Free Forever</span>
+						</li>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</section>

@@ -1,0 +1,54 @@
+{
+  "nav": {
+    "compress": "Comprimir",
+    "convert": "Convertir",
+    "about": "Nosotros",
+    "contact": "Contacto",
+    "privacy": "Privacidad"
+  },
+  "footer": {
+    "rights": "Todos los derechos reservados."
+  },
+  "optimizer": {
+    "compress_tab": "Comprimir Imagen",
+    "convert_tab": "Convertir Formato",
+    "upload_text": "Haz clic para subir o arrastra y suelta",
+    "upload_hint": "PNG, JPG, WebP, HEIC o PDF (máx. 25MB)",
+    "upload_sr": "Subir imagen",
+    "done_editing": "Listo",
+    "crop_rotate": "Recortar y Rotar",
+    "reset": "Restablecer",
+    "original": "Original",
+    "optimized": "Optimizado",
+    "quality": "Calidad de Imagen",
+    "small": "PEQUEÑO",
+    "best": "MEJOR",
+    "output_format": "Formato de Salida",
+    "dimensions": "Dimensiones",
+    "lock_aspect": "Bloquear Proporción",
+    "width": "Ancho",
+    "height": "Alto",
+    "download_compressed": "Descargar Comprimida",
+    "download_converted": "Descargar Convertida",
+    "privacy_guaranteed": "Privacidad Garantizada",
+    "privacy_desc": "Las imágenes se procesan localmente. Ningún dato sale de tu dispositivo.",
+    "converting_heic": "Convirtiendo HEIC a JPEG...",
+    "rendering_pdf": "Renderizando página PDF...",
+    "error_too_large": "La imagen es demasiado grande. El tamaño máximo es 25MB.",
+    "error_pdf_fail": "Error al procesar el archivo PDF.",
+    "error_heic_fail": "Error al procesar el archivo HEIC.",
+    "aspect_custom": "Personalizado"
+  },
+  "home": {
+    "hero_title": "Optimiza tus Imágenes con ImagNinja",
+    "hero_desc": "La forma más rápida y segura de comprimir y convertir tus imágenes. Sin cargas, sin servidores, solo privacidad.",
+    "features": {
+      "privacy": "Privacidad Primero",
+      "privacy_desc": "Tus imágenes nunca se suben a ningún servidor. Todo el procesamiento se realiza localmente.",
+      "feedback": "Feedback Instantáneo",
+      "feedback_desc": "Mira el tamaño exacto del archivo y el resultado visual mientras ajustas la calidad en tiempo real.",
+      "tools": "Herramientas Integradas",
+      "tools_desc": "Recorta a proporciones populares o cambia el tamaño a dimensiones exactas sin salir de la aplicación."
+    }
+  }
+}

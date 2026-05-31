@@ -70,6 +70,8 @@
 @layer base {
   body {
     @apply text-ink font-geist antialiased transition-colors duration-200;
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 
   .dark {
@@ -80,6 +82,20 @@
     --color-hairline: var(--dark-hairline);
     --color-hairline-strong: var(--dark-hairline-strong);
     color-scheme: dark;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    background-attachment: scroll !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
   }
 }
 

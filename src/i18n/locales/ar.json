@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "compress": "ضغظ",
+    "convert": "تحويل",
+    "about": "حول",
+    "contact": "اتصل بنا",
+    "privacy": "الخصوصية"
+  },
+  "footer": {
+    "rights": "جميع الحقوق محفوظة."
+  },
+  "optimizer": {
+    "compress_tab": "ضغظ الصورة",
+    "convert_tab": "تحويل التنسيق",
+    "upload_text": "انقر للتحميل أو اسحب وأفلت",
+    "upload_hint": "PNG أو JPG أو WebP أو HEIC أو PDF (بحد أقصى 25 ميجابايت)",
+    "upload_sr": "تحميل الصورة",
+    "done_editing": "تم التعديل",
+    "crop_rotate": "قص وتدوير",
+    "reset": "إعادة ضبط",
+    "original": "الأصلية",
+    "optimized": "المحسنة",
+    "quality": "جودة الصورة",
+    "small": "صغير",
+    "best": "الأفضل",
+    "output_format": "تنسيق المخرجات",
+    "dimensions": "الأبعاد",
+    "lock_aspect": "قفل النسبة",
+    "width": "العرض",
+    "height": "الارتفاع",
+    "download_compressed": "تحميل الصورة المضغوطة",
+    "download_converted": "تحميل الصورة المحولة",
+    "privacy_guaranteed": "خصوصية مضمونة",
+    "privacy_desc": "يتم معالجة الصور محلياً. لا تخرج أي بيانات من جهازك.",
+    "converting_heic": "جاري تحويل HEIC إلى JPEG...",
+    "rendering_pdf": "جاري معالجة صفحة PDF...",
+    "error_too_large": "الصورة كبيرة جداً. الحد الأقصى 25 ميجابايت.",
+    "error_pdf_fail": "فشل في معالجة ملف PDF.",
+    "error_heic_fail": "فشل في معالجة ملف HEIC.",
+    "aspect_custom": "تخصيص (حر)",
+    "hold_compare": "استمر بالضغط للمقارنة",
+    "preparing": "جاري التحضير..."
+  },
+  "home": {
+    "hero_title": "حسن صورك مع ImagNinja",
+    "hero_desc": "أسرع وأكثر الطرق أماناً لضغط وتحويل صورك. لا رفع للملفات، لا خوادم، فقط خصوصية.",
+    "features": {
+      "privacy": "الخصوصية أولاً",
+      "privacy_desc": "لا يتم رفع صورك إلى أي خادم أبداً. تتم جميع المعالجة محلياً عبر Web Canvas API.",
+      "feedback": "استجابة فورية",
+      "feedback_desc": "شاهد حجم الملف والنتيجة المرئية بدقة أثناء ضبط الجودة والأبعاد في الوقت الفعلي.",
+      "tools": "أدوات مدمجة",
+      "tools_desc": "قص بنسب أبعاد شائعة أو غير الحجم لأبعاد بكسل دقيقة دون مغادرة التطبيق."
+    }
+  }
+}

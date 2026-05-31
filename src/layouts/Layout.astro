@@ -1,5 +1,7 @@
 ---
 import "../styles/global.css";
+import ToasterProvider from "../components/ToasterProvider";
+import LanguageSelector from "../components/LanguageSelector";
 
 interface Props {
 	title: string;
@@ -24,7 +26,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imagninj
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 		<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="shortcut icon" href="/favicon.ico" />
@@ -33,6 +35,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imagninj
 		<link rel="manifest" href="/site.webmanifest" />
 		<meta name="generator" content={Astro.generator} />
 		
+		<!-- Theme Color -->
+		<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+		<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+
 		<!-- Primary Meta Tags -->
 		<title>{title}</title>
 		<meta name="title" content={title} />
@@ -58,120 +64,12 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imagninj
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 		<slot name="head" />
-
-		<!-- Google Translate Script -->
-		<script type="text/javascript" is:inline>
-			function googleTranslateElementInit() {
-				new google.translate.TranslateElement({
-					pageLanguage: 'en',
-					layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-					autoDisplay: false
-				}, 'google_translate_element');
-			}
-		</script>
-		<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" is:inline></script>
-
-		<style is:global>
-			/* Nuclear option to hide all Google Translate artifacts */
-			.goog-te-banner-frame,
-			.goog-te-banner,
-			.goog-te-balloon-frame,
-			.goog-te-menu-frame,
-			iframe#\:1\.container,
-			iframe#\:0\.container,
-			iframe[id*=":1.container"],
-			iframe[id*=":0.container"],
-			iframe[id*=":2.container"],
-			iframe.goog-te-banner-frame,
-			iframe.goog-te-menu-frame,
-			#goog-gt-tt,
-			.goog-gt-tt,
-			.goog-te-spinner-pos,
-			.goog-te-spinner-pos *,
-			.goog-te-spinner,
-			.goog-te-spinner *,
-			.goog-te-gadget-icon,
-			.goog-logo-link,
-			.skiptranslate[id*="goog-gt-tt"],
-			.VIpgJm-Zp6pS-aZ2wYd-W79pY,
-			.VIpgJm-Zp6pS-aZ2wYd-W79pY *,
-			#google_translate_element img,
-			.goog-te-menu-value img,
-			.goog-te-gadget-simple img,
-			.goog-te-gadget-icon {
-				display: none !important;
-				visibility: hidden !important;
-				opacity: 0 !important;
-				pointer-events: none !important;
-				height: 0 !important;
-				width: 0 !important;
-				position: absolute !important;
-				top: -9999px !important;
-			}
-
-			html, body {
-				top: 0 !important;
-				position: static !important;
-			}
-
-
-			/* Remove the highlight Google adds to translated text */
-			.goog-text-highlight {
-				background-color: transparent !important;
-				box-shadow: none !important;
-				border: none !important;
-			}
-
-			/* Ensure our custom UI remains visible and centered */
-			#theme-toggle.skiptranslate {
-				display: flex !important;
-			}
-			.skiptranslate {
-				visibility: visible !important;
-			}
-
-
-
-
-			.goog-te-gadget-simple {
-				background-color: transparent !important;
-				border: 1px solid var(--hairline) !important;
-				padding: 4px 8px !important;
-				border-radius: 6px !important;
-				font-size: 12px !important;
-				font-family: 'Inter', sans-serif !important;
-				display: flex !important;
-				align-items: center !important;
-				gap: 4px !important;
-				cursor: pointer !important;
-				transition: all 0.2s !important;
-			}
-			.goog-te-gadget-simple:hover {
-				background-color: var(--canvas-soft) !important;
-			}
-			.goog-te-menu-value {
-				color: var(--ink) !important;
-				display: flex !important;
-				align-items: center !important;
-				gap: 4px !important;
-			}
-			.goog-te-menu-value span {
-				border-left: none !important;
-			}
-			.goog-te-menu-value img {
-				display: none !important;
-			}
-			/* Dark mode adjustments for Google Translate */
-			.dark .goog-te-gadget-simple {
-				border-color: #333 !important;
-				background-color: #111 !important;
-			}
-			.dark .goog-te-menu-value {
-				color: #eee !important;
-			}
-		</style>
 	</head>
 	<body class="selection:bg-ink selection:text-canvas relative overflow-x-hidden min-h-screen">
+		<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-ink focus:text-canvas focus:rounded-geist focus:font-semibold focus:shadow-v-4">
+			Skip to main content
+		</a>
+		<ToasterProvider client:only="react" />
 		<div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none bg-canvas-soft">
 			<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] blur-[120px] rounded-full animate-blob-1 gemini-gradient-1 opacity-80"></div>
 			<div class="absolute bottom-[10%] right-[-5%] w-[35%] h-[35%] blur-[100px] rounded-full animate-blob-2 gemini-gradient-2 opacity-70"></div>
@@ -186,11 +84,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imagninj
 				<div class="flex items-center gap-6">
 					<div class="hidden md:flex items-center gap-3">
 						<a href="/compress" class="flex items-center gap-1.5 px-3 py-1.5 rounded-geist bg-ink text-canvas hover:opacity-90 transition-all text-xs font-semibold shadow-v-2">
-							<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
 							Compress
 						</a>
 						<a href="/convert" class="flex items-center gap-1.5 px-3 py-1.5 rounded-geist border border-hairline bg-canvas text-ink hover:bg-canvas-soft transition-all text-xs font-semibold shadow-v-1">
-							<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right-left"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
 							Convert
 						</a>
 						<div class="w-px h-4 bg-hairline mx-2"></div>
@@ -199,81 +95,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imagninj
 					</div>
 					<div class="h-4 w-px bg-hairline hidden md:block"></div>
 					<div class="flex items-center gap-3">
-						<!-- Custom Language Selector -->
-						<div class="relative group hidden sm:block skiptranslate">
-							<button 
-								class="flex items-center gap-2 h-8 px-3 rounded-geist border border-hairline bg-canvas text-mute hover:text-ink hover:bg-canvas-soft transition-all text-[11px] font-medium shadow-v-1"
-								aria-label="Select Language"
-							>
-								<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-languages"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/><path d="M14 18l1 2h4l1-2"/></svg>
-								<span id="current-lang">English</span>
-								<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down opacity-50 group-hover:translate-y-0.5 transition-transform"><path d="m6 9 6 6 6-6"/></svg>
-							</button>
-							<div class="absolute right-0 top-full mt-2 w-48 rounded-geist border border-hairline bg-canvas shadow-v-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[100] p-1">
-								<div class="grid grid-cols-1 gap-0.5 max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-hairline" id="lang-options">
-									<button data-lang="en" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										English <span>🇺🇸</span>
-									</button>
-									<button data-lang="es" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										Español <span>🇪🇸</span>
-									</button>
-									<button data-lang="fr" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										Français <span>🇫🇷</span>
-									</button>
-									<button data-lang="de" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										Deutsch <span>🇩🇪</span>
-									</button>
-									<button data-lang="hi" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										हिन्दी <span>🇮🇳</span>
-									</button>
-									<button data-lang="zh-CN" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										中文 <span>🇨🇳</span>
-									</button>
-									<button data-lang="ja" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										日本語 <span>🇯🇵</span>
-									</button>
-									<button data-lang="pt" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										Português <span>🇵🇹</span>
-									</button>
-									<button data-lang="ar" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										العربية <span>🇸🇦</span>
-									</button>
-									<button data-lang="ru" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										Русский <span>🇷🇺</span>
-									</button>
-									<button data-lang="ko" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										한국어 <span>🇰🇷</span>
-									</button>
-									<button data-lang="it" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										Italiano <span>🇮🇹</span>
-									</button>
-									<button data-lang="tr" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										Türkçe <span>🇹🇷</span>
-									</button>
-									<button data-lang="vi" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										Tiếng Việt <span>🇻🇳</span>
-									</button>
-									<button data-lang="pl" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										Polski <span>🇵🇱</span>
-									</button>
-									<button data-lang="nl" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										Nederlands <span>🇳🇱</span>
-									</button>
-									<button data-lang="th" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										ไทย <span>🇹🇭</span>
-									</button>
-									<button data-lang="id" class="flex items-center justify-between px-3 py-1.5 rounded-sm hover:bg-canvas-soft text-[11px] text-mute hover:text-ink transition-colors w-full text-left">
-										Bahasa Indonesia <span>🇮🇩</span>
-									</button>
-								</div>
-							</div>
-						</div>
-						<!-- Hidden Original Widget -->
-						<div id="google_translate_element" style="position: absolute; opacity: 0; pointer-events: none; z-index: -1;"></div>
+						<LanguageSelector client:only="react" />
 						
 						<button 
 							id="theme-toggle"
-							class="flex h-8 w-8 items-center justify-center rounded-geist border border-hairline bg-canvas text-ink shadow-v-1 transition-all hover:bg-canvas-soft-2 skiptranslate"
+							class="flex h-8 w-8 items-center justify-center rounded-geist border border-hairline bg-canvas text-ink shadow-v-1 transition-all hover:bg-canvas-soft-2"
 							aria-label="Toggle dark mode"
 						>
 							<svg id="sun-icon" class="hidden h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -283,10 +109,47 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imagninj
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
 							</svg>
 						</button>
+						<!-- Mobile Menu Button -->
+						<button 
+							id="mobile-menu-button"
+							class="flex md:hidden h-8 w-8 items-center justify-center rounded-geist border border-hairline bg-canvas text-ink shadow-v-1 transition-all hover:bg-canvas-soft-2"
+							aria-label="Toggle Menu"
+						>
+							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+						</button>
 					</div>
 				</div>
 			</div>
 		</nav>
+
+		<!-- Mobile Menu Overlay -->
+		<div id="mobile-menu" class="fixed inset-0 z-[100] hidden bg-canvas/95 backdrop-blur-xl animate-in fade-in zoom-in-95 duration-200">
+			<div class="flex flex-col h-full p-6">
+				<div class="flex items-center justify-between mb-12">
+					<a href="/" class="flex items-center gap-2">
+						<img src="/favicon-96x96.png" alt="Logo" class="h-6 w-6 rounded-sm" />
+						<span class="text-sm font-semibold tracking-tight text-ink">ImagNinja</span>
+					</a>
+					<button id="close-mobile-menu" class="h-8 w-8 flex items-center justify-center rounded-geist border border-hairline bg-canvas text-ink">
+						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
+					</button>
+				</div>
+				<nav class="flex flex-col gap-4">
+					<a href="/compress" class="flex items-center justify-between px-6 py-4 rounded-2xl bg-ink text-canvas font-bold shadow-v-4">
+						Compress Image
+						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
+					</a>
+					<a href="/convert" class="flex items-center justify-between px-6 py-4 rounded-2xl border border-hairline bg-canvas text-ink font-bold shadow-v-2">
+						Convert Format
+						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right-left"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+					</a>
+					<div class="h-px bg-hairline my-4"></div>
+					<a href="/about" class="px-6 py-3 text-lg font-medium text-mute hover:text-ink">About Us</a>
+					<a href="/contact" class="px-6 py-3 text-lg font-medium text-mute hover:text-ink">Contact Us</a>
+					<a href="/privacy" class="px-6 py-3 text-lg font-medium text-mute hover:text-ink">Privacy Policy</a>
+				</nav>
+			</div>
+		</div>
 
 		<script is:inline>
 			const theme = (() => {
@@ -318,126 +181,43 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imagninj
 
 			const updateIcons = () => {
 				const isDark = document.documentElement.classList.contains("dark");
-				document.getElementById('sun-icon').classList.toggle('hidden', !isDark);
-				document.getElementById('moon-icon').classList.toggle('hidden', isDark);
+				const sunIcon = document.getElementById('sun-icon');
+				const moonIcon = document.getElementById('moon-icon');
+				if (sunIcon && moonIcon) {
+					sunIcon.classList.toggle('hidden', !isDark);
+					moonIcon.classList.toggle('hidden', isDark);
+				}
 			}
 		
 			document.getElementById("theme-toggle").addEventListener("click", handleToggleClick);
 			updateIcons();
 
-			// Custom Language Selector Logic
-			const langOptions = document.getElementById('lang-options');
-			if (langOptions) {
-				langOptions.addEventListener('click', (e) => {
-					const button = e.target.closest('button');
-					if (!button) return;
+			// Mobile Menu Logic
+			const mobileMenuButton = document.getElementById('mobile-menu-button');
+			const closeMobileMenuButton = document.getElementById('close-mobile-menu');
+			const mobileMenu = document.getElementById('mobile-menu');
 
-					const lang = button.getAttribute('data-lang');
-					const langText = button.firstChild.textContent.trim();
-					
-					const triggerTranslation = () => {
-						const googleSelect = document.querySelector('.goog-te-combo');
-						if (googleSelect) {
-							googleSelect.value = lang;
-							googleSelect.dispatchEvent(new Event('change'));
-							
-							const currentLangDisplay = document.getElementById('current-lang');
-							if (currentLangDisplay) {
-								currentLangDisplay.textContent = langText;
-							}
-							return true;
-						}
-						return false;
-					};
-
-					// Set cookie with broad scope to ensure persistence
-					const domain = window.location.hostname;
-					const cookieValue = `/en/${lang}`;
-					const expires = new Date();
-					expires.setTime(expires.getTime() + (365 * 24 * 60 * 60 * 1000)); // 1 year
-					
-					document.cookie = `googtrans=${cookieValue}; expires=${expires.toUTCString()}; path=/; domain=${domain}`;
-					document.cookie = `googtrans=${cookieValue}; expires=${expires.toUTCString()}; path=/`;
-
-					if (!triggerTranslation()) {
-						// If instant trigger fails, reload to apply cookie
-						const currentLangDisplay = document.getElementById('current-lang');
-						if (currentLangDisplay) {
-							currentLangDisplay.textContent = langText;
-						}
-						window.location.reload();
-					}
+			if (mobileMenuButton && mobileMenu && closeMobileMenuButton) {
+				mobileMenuButton.addEventListener('click', () => {
+					mobileMenu.classList.remove('hidden');
+					document.body.style.overflow = 'hidden';
 				});
-			}
 
-			// Persistent UI cleanup for Google Translate
-			const cleanupGoogleUI = () => {
-				const selectors = [
-					'.goog-te-banner-frame', 
-					'#goog-gt-tt', 
-					'.goog-te-balloon-frame', 
-					'.goog-te-menu-frame',
-					'iframe[id*=":1.container"]',
-					'iframe[id*=":0.container"]',
-					'iframe[id*=":2.container"]',
-					'iframe.goog-te-banner-frame',
-					'.skiptranslate.goog-te-gadget',
-					'.VIpgJm-Zp6pS-aZ2wYd-W79pY',
-					'.goog-te-spinner-pos',
-					'.goog-te-spinner',
-					'.goog-te-gadget-icon',
-					'#google_translate_element img',
-					'.goog-te-menu-value img',
-					'.goog-te-gadget-simple img'
-				];
-				selectors.forEach(s => {
-					const el = document.querySelectorAll(s);
-					el.forEach(item => {
-						item.style.setProperty('display', 'none', 'important');
-						item.style.setProperty('visibility', 'hidden', 'important');
-						item.style.setProperty('opacity', '0', 'important');
-						item.style.setProperty('pointer-events', 'none', 'important');
-						item.style.setProperty('height', '0px', 'important');
-						item.style.setProperty('width', '0px', 'important');
+				closeMobileMenuButton.addEventListener('click', () => {
+					mobileMenu.classList.add('hidden');
+					document.body.style.overflow = '';
+				});
+
+				// Close on link click
+				mobileMenu.querySelectorAll('a').forEach(link => {
+					link.addEventListener('click', () => {
+						mobileMenu.classList.add('hidden');
+						document.body.style.overflow = '';
 					});
 				});
-				if (document.body.style.top !== '0px') {
-					document.body.style.setProperty('top', '0px', 'important');
-				}
-			};
-
-			// Run cleanup very frequently initially, then slow down
-			let cleanupInterval = setInterval(cleanupGoogleUI, 50);
-			setTimeout(() => {
-				clearInterval(cleanupInterval);
-				setInterval(cleanupGoogleUI, 300);
-			}, 5000);
-			const observer = new MutationObserver(cleanupGoogleUI);
-			observer.observe(document.documentElement, { attributes: true, childList: true, subtree: true });
-
-			// On page load, sync the current language label
-			window.addEventListener('load', () => {
-				const getCookie = (name) => {
-					const value = `; ${document.cookie}`;
-					const parts = value.split(`; ${name}=`);
-					if (parts.length === 2) return parts.pop().split(';').shift();
-				};
-				
-				const googtrans = getCookie('googtrans');
-				if (googtrans) {
-					const langCode = googtrans.split('/').pop();
-					const matchingBtn = document.querySelector(`#lang-options button[data-lang="${langCode}"]`);
-					if (matchingBtn) {
-						const langText = matchingBtn.firstChild.textContent.trim();
-						const currentLangDisplay = document.getElementById('current-lang');
-						if (currentLangDisplay) {
-							currentLangDisplay.textContent = langText;
-						}
-					}
-				}
-			});
+			}
 		</script>
-		<main>
+		<main id="main-content">
 			<slot />
 		</main>
 		<footer class="border-t border-hairline bg-canvas py-16 mt-24">
