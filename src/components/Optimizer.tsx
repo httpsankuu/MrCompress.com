@@ -4,6 +4,14 @@ import Cropper from 'react-easy-crop';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import heic2any from 'heic2any';
+import { jsPDF } from 'jspdf';
+import * as pdfjsLib from 'pdfjs-dist';
+
+// Use local worker from node_modules via Vite ?url
+// @ts-ignore
+import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -39,6 +47,7 @@ const OUTPUT_FORMATS = [
   { label: 'PNG', value: 'image/png' },
   { label: 'WebP', value: 'image/webp' },
   { label: 'AVIF', value: 'image/avif' },
+  { label: 'PDF', value: 'application/pdf' },
 ];
 
 export default function Optimizer() {
@@ -57,6 +66,7 @@ export default function Optimizer() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [outputFormat, setOutputFormat] = useState('original');
   const [isConvertingHeic, setIsConvertingHeic] = useState(false);
+  const [isConvertingPdf, setIsConvertingPdf] = useState(false);
   const [activeTab, setActiveTab] = useState<'compress' | 'convert'>('compress');
 
   const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,6 +83,42 @@ export default function Optimizer() {
     }
 
     let processingFile = file;
+
+    // Handle PDF
+    if (file.type === 'application/pdf') {
+      setIsConvertingPdf(true);
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const page = await pdf.getPage(1);
+        const viewport = page.getViewport({ scale: 2 });
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        await page.render({ canvasContext: context!, viewport }).promise;
+        const dataUrl = canvas.toDataURL('image/png');
+        
+        setImage({
+          file,
+          preview: dataUrl,
+          originalSize: file.size,
+          width: canvas.width,
+          height: canvas.height,
+          aspectRatio: canvas.width / canvas.height,
+          type: 'image/png'
+        });
+        setTargetWidth(canvas.width);
+        setTargetHeight(canvas.height);
+      } catch (err) {
+        console.error("PDF processing failed", err);
+        alert("Failed to process PDF file.");
+      } finally {
+        setIsConvertingPdf(false);
+      }
+      return;
+    }
 
     // Handle HEIC
     if (file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif')) {
@@ -158,6 +204,21 @@ export default function Optimizer() {
 
     const targetType = outputFormat === 'original' ? image.type : outputFormat;
 
+    if (targetType === 'application/pdf') {
+      const pdf = new jsPDF({
+        orientation: targetWidth > targetHeight ? 'l' : 'p',
+        unit: 'px',
+        format: [targetWidth, targetHeight]
+      });
+      const imgData = canvas.toDataURL('image/jpeg', quality / 100);
+      pdf.addImage(imgData, 'JPEG', 0, 0, targetWidth, targetHeight);
+      const pdfBlob = pdf.output('blob');
+      setCompressedBlob(pdfBlob);
+      setCompressedSize(pdfBlob.size);
+      setIsProcessing(false);
+      return;
+    }
+
     canvas.toBlob(
       (blob) => {
         if (blob) {
@@ -180,10 +241,21 @@ export default function Optimizer() {
 
   const handleDownload = () => {
     if (!compressedBlob || !image) return;
+    
+    const baseName = image.file.name.substring(0, image.file.name.lastIndexOf('.')) || image.file.name;
+    const mimeToExt: Record<string, string> = {
+      'image/jpeg': 'jpg',
+      'image/png': 'png',
+      'image/webp': 'webp',
+      'image/avif': 'avif',
+      'application/pdf': 'pdf'
+    };
+    const ext = mimeToExt[compressedBlob.type] || 'bin';
+    
     const url = URL.createObjectURL(compressedBlob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `optimized-${image.file.name}`;
+    a.download = `optimized-${baseName}.${ext}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -198,229 +270,220 @@ export default function Optimizer() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  if (!image) {
-    return (
-      <div className="mx-auto max-w-2xl px-4 py-20">
-        {isConvertingHeic && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-canvas/80 backdrop-blur-sm">
-            <div className="flex flex-col items-center gap-4">
-              <div className="h-10 w-10 animate-spin rounded-full border-2 border-hairline border-t-ink"></div>
-              <p className="text-sm font-medium text-ink">Converting HEIC to JPEG...</p>
-            </div>
-          </div>
-        )}
-        <div 
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => {
-            e.preventDefault();
-            const file = e.dataTransfer.files[0];
-            if (file) handleFile(file);
-          }}
-          className="group relative flex aspect-[16/9] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-hairline bg-canvas transition-all hover:border-hairline-strong hover:bg-canvas-soft-2"
-          onClick={() => document.getElementById('fileInput')?.click()}
-        >
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft shadow-v-1 transition-transform group-hover:scale-110">
-            <Upload className="h-6 w-6 text-mute" />
-          </div>
-          <p className="mt-4 text-sm font-medium text-ink">Click to upload or drag and drop</p>
-          <p className="mt-1 text-xs text-mute">PNG, JPG or WebP (max. 25MB)</p>
-          <input 
-            id="fileInput" 
-            type="file" 
-            className="hidden" 
-            accept="image/*" 
-            onChange={onSelectFile} 
-          />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
-      <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
-        {/* Preview Area */}
-        <div className="lg:col-span-8">
-          <div className="relative overflow-hidden rounded-xl border border-hairline bg-canvas shadow-v-3">
-            <div className="flex h-12 items-center justify-between border-b border-hairline bg-canvas-soft px-4">
-              <div className="flex items-center gap-2">
-                <ImageIcon className="h-4 w-4 text-mute" />
-                <span className="text-xs font-medium text-ink">{image.file.name}</span>
-              </div>
-              <button 
-                onClick={() => setImage(null)}
-                className="rounded-md p-1 hover:bg-canvas-soft-2 transition-colors"
-              >
-                <X className="h-4 w-4 text-mute" />
-              </button>
-            </div>
-            
-            <div className="relative aspect-video bg-canvas-soft-2 flex items-center justify-center overflow-hidden p-8">
-              {isCropping ? (
-                <div className="absolute inset-0 z-10">
-                  <Cropper
-                    image={image.preview}
-                    crop={crop}
-                    zoom={zoom}
-                    aspect={aspect}
-                    onCropChange={setCrop}
-                    onCropComplete={onCropComplete}
-                    onZoomChange={setZoom}
-                  />
-                </div>
-              ) : (
-                <img 
-                  src={image.preview} 
-                  alt="Original" 
-                  className="max-h-full max-w-full object-contain shadow-v-2"
-                />
-              )}
-            </div>
-
-            <div className="flex h-14 items-center justify-between px-4 bg-canvas border-t border-hairline">
-               <div className="flex gap-2">
-                <button 
-                  onClick={() => setIsCropping(!isCropping)}
-                  className={cn(
-                    "flex items-center gap-2 rounded-geist-marketing px-3 py-1.5 text-xs font-medium transition-all",
-                    isCropping ? "bg-ink text-canvas" : "bg-canvas-soft text-ink hover:bg-canvas-soft-2 shadow-v-1"
-                  )}
-                >
-                  <Scissors className="h-3.5 w-3.5" />
-                  {isCropping ? "Done" : "Crop"}
-                </button>
-                {isCropping && (
-                  <div className="flex gap-1 border-l border-hairline ml-2 pl-2">
-                    {ASPECT_RATIOS.map((ar) => (
-                      <button
-                        key={ar.label}
-                        onClick={() => setAspect(ar.value)}
-                        className={cn(
-                          "rounded-geist-marketing px-2 py-1 text-[10px] font-medium transition-all",
-                          aspect === ar.value ? "bg-ink/10 text-ink" : "text-mute hover:text-ink hover:bg-canvas-soft"
-                        )}
-                      >
-                        {ar.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
-               </div>
-               <div className="flex items-center gap-6">
-                 <div className="text-right">
-                   <p className="text-[10px] uppercase tracking-wider text-mute">Original</p>
-                   <p className="text-xs font-semibold text-ink">{formatSize(image.originalSize)}</p>
-                 </div>
-                 <div className="h-8 w-px bg-hairline" />
-                 <div className="text-right">
-                   <p className="text-[10px] uppercase tracking-wider text-mute">Optimized</p>
-                   <p className={cn(
-                     "text-xs font-bold transition-colors",
-                     compressedSize < image.originalSize ? "text-geist-success" : "text-geist-warning"
-                   )}>
-                     {isProcessing ? "Processing..." : formatSize(compressedSize)}
-                   </p>
-                 </div>
-               </div>
-            </div>
+      {isConvertingHeic && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-canvas/80 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-4">
+            <div className="h-10 w-10 animate-spin rounded-full border-2 border-hairline border-t-ink"></div>
+            <p className="text-sm font-medium text-ink">Converting HEIC to JPEG...</p>
           </div>
         </div>
+      )}
 
-        {/* Controls Area */}
-        <div className="lg:col-span-4">
-          <div className="sticky top-24 flex flex-col gap-6">
-            <div className="rounded-xl border border-hairline bg-canvas shadow-v-2 overflow-hidden">
-              {/* Tab Header */}
-              <div className="flex border-b border-hairline bg-canvas-soft">
-                <button 
-                  onClick={() => setActiveTab('compress')}
-                  className={cn(
-                    "flex-1 py-3 text-xs font-semibold transition-all",
-                    activeTab === 'compress' ? "bg-canvas text-ink" : "text-mute hover:text-ink hover:bg-canvas-soft-2"
-                  )}
-                >
-                  Compressor
-                </button>
-                <button 
-                  onClick={() => setActiveTab('convert')}
-                  className={cn(
-                    "flex-1 py-3 text-xs font-semibold border-l border-hairline transition-all",
-                    activeTab === 'convert' ? "bg-canvas text-ink" : "text-mute hover:text-ink hover:bg-canvas-soft-2"
-                  )}
-                >
-                  Converter
-                </button>
+      {isConvertingPdf && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-canvas/80 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-4">
+            <div className="h-10 w-10 animate-spin rounded-full border-2 border-hairline border-t-ink"></div>
+            <p className="text-sm font-medium text-ink">Rendering PDF page...</p>
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
+        <div className="lg:col-span-8">
+          <div className="relative overflow-hidden rounded-xl border border-hairline bg-canvas shadow-v-3">
+            <div className="flex border-b border-hairline bg-canvas-soft">
+              <button 
+                onClick={() => setActiveTab('compress')}
+                className={cn(
+                  "flex-1 py-4 text-xs font-semibold transition-all flex items-center justify-center gap-2",
+                  activeTab === 'compress' ? "bg-canvas text-ink" : "text-mute hover:text-ink hover:bg-canvas-soft-2"
+                )}
+              >
+                <Sliders className="h-3.5 w-3.5" />
+                Compress Image
+              </button>
+              <button 
+                onClick={() => setActiveTab('convert')}
+                className={cn(
+                  "flex-1 py-4 text-xs font-semibold border-l border-hairline transition-all flex items-center justify-center gap-2",
+                  activeTab === 'convert' ? "bg-canvas text-ink" : "text-mute hover:text-ink hover:bg-canvas-soft-2"
+                )}
+              >
+                <ArrowRightLeft className="h-3.5 w-3.5" />
+                Convert Format
+              </button>
+            </div>
+
+            {!image ? (
+              <div 
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const file = e.dataTransfer.files[0];
+                  if (file) handleFile(file);
+                }}
+                className="group relative flex aspect-[16/9] cursor-pointer flex-col items-center justify-center bg-canvas transition-all hover:bg-canvas-soft-2 p-12"
+                onClick={() => document.getElementById('fileInput')?.click()}
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft shadow-v-1 transition-transform group-hover:scale-110">
+                  <Upload className="h-6 w-6 text-mute" />
+                </div>
+                <p className="mt-4 text-sm font-medium text-ink">Click to upload or drag and drop</p>
+                <p className="mt-1 text-xs text-mute">PNG, JPG, WebP or HEIC (max. 25MB)</p>
+                <input 
+                  id="fileInput" 
+                  type="file" 
+                  className="hidden" 
+                  accept="image/*,.heic,.heif,.pdf,application/pdf" 
+                  onChange={onSelectFile} 
+                />
               </div>
-
-              <div className="p-6 space-y-6">
-                {activeTab === 'compress' ? (
-                  <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                    <div className="mb-2 flex items-center gap-2">
-                      <Sliders className="h-4 w-4 text-mute" />
-                      <h3 className="text-sm font-semibold text-ink tracking-tight">Quality Settings</h3>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <label className="text-xs font-medium text-ink">Image Quality</label>
-                        <span className="text-xs font-bold text-ink">{quality}%</span>
-                      </div>
-                      <input 
-                        type="range" 
-                        min="1" 
-                        max="100" 
-                        value={quality} 
-                        onChange={(e) => setQuality(parseInt(e.target.value))}
-                        className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-canvas-soft-2 accent-ink"
-                      />
-                      <div className="flex justify-between text-[10px] text-mute font-mono">
-                        <span>SMALLEST</span>
-                        <span>BEST</span>
-                      </div>
-                    </div>
+            ) : (
+              <>
+                <div className="flex h-10 items-center justify-between bg-canvas-soft/50 px-4 border-b border-hairline">
+                  <div className="flex items-center gap-2">
+                    <ImageIcon className="h-3.5 w-3.5 text-mute" />
+                    <span className="text-[10px] font-medium text-ink truncate max-w-[200px]">{image.file.name}</span>
                   </div>
-                ) : (
-                  <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                    <div className="mb-2 flex items-center gap-2">
-                      <ArrowRightLeft className="h-4 w-4 text-mute" />
-                      <h3 className="text-sm font-semibold text-ink tracking-tight">Format Settings</h3>
+                  <button 
+                    onClick={() => setImage(null)}
+                    className="rounded-md p-1 hover:bg-canvas-soft-2 transition-colors"
+                  >
+                    <X className="h-3.5 w-3.5 text-mute" />
+                  </button>
+                </div>
+                
+                <div className="relative aspect-video bg-canvas-soft-2 flex items-center justify-center overflow-hidden p-8">
+                  {isCropping ? (
+                    <div className="absolute inset-0 z-10">
+                      <Cropper
+                        image={image.preview}
+                        crop={crop}
+                        zoom={zoom}
+                        aspect={aspect}
+                        onCropChange={setCrop}
+                        onCropComplete={onCropComplete}
+                        onZoomChange={setZoom}
+                      />
                     </div>
+                  ) : (
+                    <img 
+                      src={image.preview} 
+                      alt="Preview" 
+                      className="max-h-full max-w-full object-contain shadow-v-2"
+                    />
+                  )}
+                </div>
 
-                    <div className="space-y-3">
-                      <label className="text-xs font-medium text-ink">Choose Output Format</label>
-                      <div className="flex flex-wrap gap-2">
-                        {OUTPUT_FORMATS.map((format) => (
+                <div className="flex h-14 items-center justify-between px-4 bg-canvas border-t border-hairline">
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => setIsCropping(!isCropping)}
+                      className={cn(
+                        "flex items-center gap-2 rounded-geist-marketing px-3 py-1.5 text-xs font-medium transition-all",
+                        isCropping ? "bg-ink text-canvas" : "bg-canvas-soft text-ink hover:bg-canvas-soft-2 shadow-v-1"
+                      )}
+                    >
+                      <Scissors className="h-3.5 w-3.5" />
+                      {isCropping ? "Done" : "Crop"}
+                    </button>
+                    {isCropping && (
+                      <div className="flex gap-1 border-l border-hairline ml-2 pl-2">
+                        {ASPECT_RATIOS.map((ar) => (
                           <button
-                            key={format.value}
-                            onClick={() => setOutputFormat(format.value)}
+                            key={ar.label}
+                            onClick={() => setAspect(ar.value)}
                             className={cn(
-                              "flex-1 min-w-[80px] rounded-geist-marketing px-3 py-2 text-[10px] font-medium transition-all shadow-v-1 border",
-                              outputFormat === format.value 
-                                ? "bg-ink text-canvas border-ink" 
-                                : "bg-canvas text-ink border-hairline hover:bg-canvas-soft-2"
+                              "rounded-geist-marketing px-2 py-1 text-[10px] font-medium transition-all",
+                              aspect === ar.value ? "bg-ink/10 text-ink" : "text-mute hover:text-ink hover:bg-canvas-soft"
                             )}
                           >
-                            {format.label}
+                            {ar.label}
                           </button>
                         ))}
                       </div>
-                      <p className="text-[10px] text-mute italic mt-2">
-                        {outputFormat === 'original' 
-                          ? "Keeps the original image format." 
-                          : `Converts your image to ${outputFormat.split('/')[1].toUpperCase()}.`}
+                    )}
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <div className="text-right">
+                      <p className="text-[10px] uppercase tracking-wider text-mute">Original</p>
+                      <p className="text-xs font-semibold text-ink">{formatSize(image.originalSize)}</p>
+                    </div>
+                    <div className="h-8 w-px bg-hairline" />
+                    <div className="text-right">
+                      <p className="text-[10px] uppercase tracking-wider text-mute">Optimized</p>
+                      <p className={cn(
+                        "text-xs font-bold transition-colors",
+                        compressedSize < image.originalSize ? "text-geist-success" : "text-geist-warning"
+                      )}>
+                        {isProcessing ? "..." : formatSize(compressedSize)}
                       </p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="lg:col-span-4">
+          <div className="sticky top-24 flex flex-col gap-6">
+            <div className="rounded-xl border border-hairline bg-canvas p-6 shadow-v-2">
+              <div className="space-y-6">
+                {activeTab === 'compress' ? (
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-medium text-ink">Image Quality</label>
+                      <span className="text-xs font-bold text-ink">{quality}%</span>
+                    </div>
+                    <input 
+                      type="range" 
+                      min="1" 
+                      max="100" 
+                      value={quality} 
+                      disabled={!image}
+                      onChange={(e) => setQuality(parseInt(e.target.value))}
+                      className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-canvas-soft-2 accent-ink disabled:opacity-30"
+                    />
+                    <div className="flex justify-between text-[10px] text-mute font-mono">
+                      <span>SMALL</span>
+                      <span>BEST</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <label className="text-xs font-medium text-ink">Output Format</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {OUTPUT_FORMATS.map((format) => (
+                        <button
+                          key={format.value}
+                          disabled={!image}
+                          onClick={() => setOutputFormat(format.value)}
+                          className={cn(
+                            "rounded-geist-marketing px-3 py-2 text-[10px] font-medium transition-all shadow-v-1 border",
+                            outputFormat === format.value 
+                              ? "bg-ink text-canvas border-ink" 
+                              : "bg-canvas text-ink border-hairline hover:bg-canvas-soft-2 disabled:opacity-30"
+                          )}
+                        >
+                          {format.label}
+                        </button>
+                      ))}
                     </div>
                   </div>
                 )}
 
                 <div className="space-y-4 pt-4 border-t border-hairline">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-medium text-ink">Resize Dimensions</label>
+                    <label className="text-xs font-medium text-ink">Dimensions</label>
                     <div className="flex items-center gap-2">
                       <input 
                         type="checkbox" 
                         id="aspect"
                         checked={maintainAspectRatio}
+                        disabled={!image}
                         onChange={(e) => setMaintainAspectRatio(e.target.checked)}
                         className="h-3 w-3 rounded-sm border-hairline accent-ink"
                       />
@@ -435,6 +498,7 @@ export default function Optimizer() {
                         <input 
                           type="number" 
                           value={targetWidth}
+                          disabled={!image}
                           onChange={(e) => {
                             const val = parseInt(e.target.value) || 0;
                             setTargetWidth(val);
@@ -442,7 +506,7 @@ export default function Optimizer() {
                               setTargetHeight(Math.round(val / image.aspectRatio));
                             }
                           }}
-                          className="w-full h-9 rounded-geist border border-hairline bg-canvas px-3 text-xs font-medium text-ink focus:outline-none focus:ring-1 focus:ring-ink transition-all"
+                          className="w-full h-9 rounded-geist border border-hairline bg-canvas px-3 text-xs font-medium text-ink focus:outline-none focus:ring-1 focus:ring-ink transition-all disabled:opacity-30"
                         />
                         <span className="absolute right-3 top-2.5 text-[10px] text-mute">PX</span>
                       </div>
@@ -453,6 +517,7 @@ export default function Optimizer() {
                         <input 
                           type="number" 
                           value={targetHeight}
+                          disabled={!image}
                           onChange={(e) => {
                             const val = parseInt(e.target.value) || 0;
                             setTargetHeight(val);
@@ -460,7 +525,7 @@ export default function Optimizer() {
                               setTargetWidth(Math.round(val * image.aspectRatio));
                             }
                           }}
-                          className="w-full h-9 rounded-geist border border-hairline bg-canvas px-3 text-xs font-medium text-ink focus:outline-none focus:ring-1 focus:ring-ink transition-all"
+                          className="w-full h-9 rounded-geist border border-hairline bg-canvas px-3 text-xs font-medium text-ink focus:outline-none focus:ring-1 focus:ring-ink transition-all disabled:opacity-30"
                         />
                         <span className="absolute right-3 top-2.5 text-[10px] text-mute">PX</span>
                       </div>
@@ -470,9 +535,9 @@ export default function Optimizer() {
 
                 <button 
                   onClick={handleDownload}
-                  disabled={isProcessing || !compressedBlob}
+                  disabled={isProcessing || !compressedBlob || !image}
                   className={cn(
-                    "mt-4 flex w-full items-center justify-center gap-2 rounded-geist-pill py-3 text-sm font-semibold text-canvas shadow-v-4 transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50",
+                    "mt-4 flex w-full items-center justify-center gap-2 rounded-geist-pill py-3 text-sm font-semibold text-canvas shadow-v-4 transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30",
                     activeTab === 'compress' ? "bg-ink" : "bg-geist-link"
                   )}
                 >
@@ -489,7 +554,7 @@ export default function Optimizer() {
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-ink">Privacy Guaranteed</p>
-                  <p className="text-[10px] text-mute leading-relaxed">Images are processed locally in your browser. No data ever leaves your device.</p>
+                  <p className="text-[10px] text-mute leading-relaxed">Images are processed locally. No data ever leaves your device.</p>
                 </div>
               </div>
             </div>
