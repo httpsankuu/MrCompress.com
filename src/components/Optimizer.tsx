@@ -1,6 +1,7 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { Upload, Download, X, Image as ImageIcon, Check, Sliders, Scissors, ArrowRightLeft } from 'lucide-react';
-import Cropper from 'react-easy-crop';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { Upload, Download, X, Image as ImageIcon, Check, Sliders, Scissors, ArrowRightLeft, RotateCcw } from 'lucide-react';
+import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import heic2any from 'heic2any';
@@ -35,10 +36,16 @@ interface CropArea {
 }
 
 const ASPECT_RATIOS = [
-  { label: 'Free', value: undefined },
+  { label: 'Custom (Free)', value: undefined },
   { label: '1:1', value: 1 },
+  { label: '4:5', value: 0.8, description: 'IG Post' },
   { label: '4:3', value: 4 / 3 },
+  { label: '3:4', value: 3 / 4 },
+  { label: '3:2', value: 3 / 2 },
   { label: '16:9', value: 16 / 9 },
+  { label: '9:16', value: 9 / 16, description: 'Story/TikTok' },
+  { label: '5:4', value: 5 / 4 },
+  { label: '2:1', value: 2 },
 ];
 
 const OUTPUT_FORMATS = [
@@ -58,11 +65,17 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
   const [maintainAspectRatio, setMaintainAspectRatio] = useState(true);
   const [compressedBlob, setCompressedBlob] = useState<Blob | null>(null);
   const [compressedSize, setCompressedSize] = useState<number>(0);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isCropping, setIsCropping] = useState(false);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [aspect, setAspect] = useState<number | undefined>(undefined);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<CropArea | null>(null);
+  
+  // react-image-crop state
+  const [crop, setCrop] = useState<Crop>();
+  const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
+  const imgRef = useRef<HTMLImageElement>(null);
+  
+  const [rotation, setRotation] = useState(0);
+  const [aspect, setAspect] = useState<number | undefined>(undefined);
   const [isProcessing, setIsProcessing] = useState(false);
   const [outputFormat, setOutputFormat] = useState('original');
   const [isConvertingHeic, setIsConvertingHeic] = useState(false);
@@ -111,6 +124,7 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
         });
         setTargetWidth(canvas.width);
         setTargetHeight(canvas.height);
+        setRotation(0);
       } catch (err) {
         console.error("PDF processing failed", err);
         alert("Failed to process PDF file.");
@@ -155,17 +169,44 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
         });
         setTargetWidth(img.width);
         setTargetHeight(img.height);
+        setRotation(0);
+        setCrop(undefined); // Reset crop for new image
+        setCompletedCrop(undefined);
       };
     });
     reader.readAsDataURL(processingFile);
   };
 
-  const onCropComplete = useCallback((croppedArea: any, croppedAreaPixels: CropArea) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-    // Real-time dimension sync
-    setTargetWidth(Math.round(croppedAreaPixels.width));
-    setTargetHeight(Math.round(croppedAreaPixels.height));
-  }, []);
+  const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (aspect) {
+      const { width, height } = e.currentTarget;
+      setCrop(centerCrop(
+        makeAspectCrop(
+          {
+            unit: '%',
+            width: 90,
+          },
+          aspect,
+          width,
+          height
+        ),
+        width,
+        height
+      ));
+    }
+  };
+
+  const handleReset = () => {
+    setRotation(0);
+    setAspect(undefined);
+    setCrop(undefined);
+    setCompletedCrop(undefined);
+    setCroppedAreaPixels(null);
+    if (image) {
+      setTargetWidth(image.width);
+      setTargetHeight(image.height);
+    }
+  };
 
   const compressImage = useCallback(async () => {
     if (!image) return;
@@ -196,6 +237,13 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
 
     canvas.width = targetWidth;
     canvas.height = targetHeight;
+
+    // Apply rotation
+    if (rotation !== 0) {
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate((rotation * Math.PI) / 180);
+      ctx.translate(-canvas.width / 2, -canvas.height / 2);
+    }
 
     ctx.drawImage(
       img,
@@ -231,7 +279,7 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
       targetType,
       quality / 100
     );
-  }, [image, quality, targetWidth, targetHeight, croppedAreaPixels, outputFormat]);
+  }, [image, quality, targetWidth, targetHeight, completedCrop, outputFormat, rotation]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -239,6 +287,14 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
     }, 300);
     return () => clearTimeout(timer);
   }, [compressImage]);
+
+  useEffect(() => {
+    if (compressedBlob && compressedBlob.type !== 'application/pdf') {
+      const url = URL.createObjectURL(compressedBlob);
+      setPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+  }, [compressedBlob]);
 
   const handleDownload = () => {
     if (!compressedBlob || !image) return;
@@ -264,11 +320,16 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
   };
 
   const formatSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
+    if (!bytes || bytes <= 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    try {
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      if (i < 0) return '0 Bytes';
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    } catch (e) {
+      return '0 Bytes';
+    }
   };
 
   return (
@@ -345,84 +406,172 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
               <>
                 <div className="flex h-10 items-center justify-between bg-canvas-soft/50 px-4 border-b border-hairline">
                   <div className="flex items-center gap-2">
-                    <ImageIcon className="h-3.5 w-3.5 text-mute" />
+                    <ImageIcon className="h-3.5 w-3.5 text-mute" aria-hidden="true" />
                     <span className="text-[10px] font-medium text-ink truncate max-w-[200px]">{image.file.name}</span>
                   </div>
                   <button 
                     onClick={() => setImage(null)}
                     className="rounded-md p-1 hover:bg-canvas-soft-2 transition-colors"
+                    aria-label="Remove image"
                   >
-                    <X className="h-3.5 w-3.5 text-mute" />
+                    <X className="h-3.5 w-3.5 text-mute" aria-hidden="true" />
                   </button>
                 </div>
                 
-                <div className="relative aspect-video bg-canvas-soft-2 flex items-center justify-center overflow-hidden p-8">
+                <div className="relative min-h-[400px] lg:h-[500px] bg-canvas-soft-2 flex items-center justify-center overflow-hidden p-8">
                   {isCropping ? (
-                    <div className="absolute inset-0 z-10">
-                      <Cropper
-                        image={image.preview}
+                    <div className="relative max-w-full max-h-full">
+                      <ReactCrop
                         crop={crop}
-                        zoom={zoom}
+                        onChange={(c) => setCrop(c)}
+                        onComplete={(c) => {
+                          setCompletedCrop(c);
+                          if (imgRef.current && c.width > 0 && c.height > 0) {
+                            const scaleX = image.width / imgRef.current.width;
+                            const scaleY = image.height / imgRef.current.height;
+                            const actualCrop = {
+                              x: Math.round(c.x * scaleX),
+                              y: Math.round(c.y * scaleY),
+                              width: Math.round(c.width * scaleX),
+                              height: Math.round(c.height * scaleY)
+                            };
+                            setCroppedAreaPixels(actualCrop);
+                            setTargetWidth(actualCrop.width);
+                            setTargetHeight(actualCrop.height);
+                          } else if (c.width === 0 || c.height === 0) {
+                            setCroppedAreaPixels(null);
+                            if (image) {
+                              setTargetWidth(image.width);
+                              setTargetHeight(image.height);
+                            }
+                          }
+                        }}
                         aspect={aspect}
-                        onCropChange={setCrop}
-                        onCropComplete={onCropComplete}
-                        onZoomChange={setZoom}
-                      />
+                      >
+                        <img
+                          ref={imgRef}
+                          src={image.preview}
+                          alt="Crop preview"
+                          onLoad={onImageLoad}
+                          style={{ transform: `rotate(${rotation}deg)`, maxHeight: '450px' }}
+                        />
+                      </ReactCrop>
                     </div>
                   ) : (
-                    <img 
-                      src={image.preview} 
-                      alt="Preview" 
-                      className="max-h-full max-w-full object-contain shadow-v-2"
-                    />
+                    <div className="relative max-h-full transition-all duration-300">
+                      <img 
+                        src={previewUrl || image.preview} 
+                        alt="Preview" 
+                        className="max-h-[450px] max-w-full object-contain shadow-v-2 rounded-sm"
+                        style={!previewUrl ? { transform: `rotate(${rotation}deg)` } : {}}
+                      />
+                    </div>
                   )}
                 </div>
 
-                <div className="flex h-14 items-center justify-between px-4 bg-canvas border-t border-hairline">
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={() => setIsCropping(!isCropping)}
-                      className={cn(
-                        "flex items-center gap-2 rounded-geist-marketing px-3 py-1.5 text-xs font-medium transition-all",
-                        isCropping ? "bg-ink text-canvas" : "bg-canvas-soft text-ink hover:bg-canvas-soft-2 shadow-v-1"
-                      )}
-                    >
-                      <Scissors className="h-3.5 w-3.5" />
-                      {isCropping ? "Done" : "Crop"}
-                    </button>
-                    {isCropping && (
-                      <div className="flex gap-1 border-l border-hairline ml-2 pl-2">
-                        {ASPECT_RATIOS.map((ar) => (
+                <div className="flex flex-col bg-canvas border-t border-hairline">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 py-4 gap-6">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button 
+                        onClick={() => setIsCropping(!isCropping)}
+                        className={cn(
+                          "flex items-center gap-2 rounded-geist-marketing px-4 py-2 text-xs font-semibold transition-all",
+                          isCropping ? "bg-ink text-canvas shadow-v-3" : "bg-canvas-soft text-ink hover:bg-canvas-soft-2 shadow-v-1 border border-hairline"
+                        )}
+                      >
+                        <Scissors className="h-4 w-4" />
+                        {isCropping ? "Done Editing" : "Crop & Rotate"}
+                      </button>
+                      
+                      {isCropping && (
+                        <div className="flex items-center gap-2 border-l border-hairline ml-2 pl-2">
+                          <div className="flex items-center bg-canvas-soft rounded-lg p-0.5 border border-hairline">
+                            <button
+                              onClick={() => setRotation((r) => (r - 90) % 360)}
+                              className="rounded-md p-1.5 text-mute hover:text-ink hover:bg-canvas transition-all"
+                              title="Rotate Left"
+                            >
+                              <ArrowRightLeft className="h-4 w-4 -rotate-90" />
+                            </button>
+                            <button
+                              onClick={() => setRotation((r) => (r + 90) % 360)}
+                              className="rounded-md p-1.5 text-mute hover:text-ink hover:bg-canvas transition-all"
+                              title="Rotate Right"
+                            >
+                              <ArrowRightLeft className="h-4 w-4 rotate-90" />
+                            </button>
+                          </div>
                           <button
-                            key={ar.label}
-                            onClick={() => setAspect(ar.value)}
-                            className={cn(
-                              "rounded-geist-marketing px-2 py-1 text-[10px] font-medium transition-all",
-                              aspect === ar.value ? "bg-ink/10 text-ink" : "text-mute hover:text-ink hover:bg-canvas-soft"
-                            )}
+                            onClick={handleReset}
+                            className="flex items-center gap-2 rounded-md px-3 py-1.5 text-[10px] font-bold text-mute hover:text-ink hover:bg-canvas-soft transition-all"
                           >
-                            {ar.label}
+                            <RotateCcw className="h-3.5 w-3.5" />
+                            Reset
                           </button>
-                        ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-8 bg-canvas-soft/80 rounded-xl px-6 py-3 border border-hairline">
+                      <div className="flex flex-col">
+                        <span className="text-[10px] uppercase tracking-widest text-mute font-black opacity-60">Original</span>
+                        <span className="text-sm font-bold text-ink">{formatSize(image.originalSize)}</span>
                       </div>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-6">
-                    <div className="text-right">
-                      <p className="text-[10px] uppercase tracking-wider text-mute">Original</p>
-                      <p className="text-xs font-semibold text-ink">{formatSize(image.originalSize)}</p>
+                      <div className="h-8 w-px bg-hairline-strong/20" />
+                      <div className="flex flex-col items-end text-right">
+                        <span className="text-[10px] uppercase tracking-widest text-mute font-black opacity-60">Optimized</span>
+                        <div className="flex items-center gap-3">
+                          {compressedSize > 0 && (
+                            <span className="text-[10px] font-black text-geist-success bg-geist-success/10 px-2 py-0.5 rounded-full border border-geist-success/20">
+                              -{Math.round((1 - compressedSize / image.originalSize) * 100)}%
+                            </span>
+                          )}
+                          <span className={cn(
+                            "text-sm font-black transition-colors",
+                            compressedSize < image.originalSize ? "text-geist-success" : "text-geist-warning"
+                          )}>
+                            {isProcessing ? "..." : formatSize(compressedSize)}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="h-8 w-px bg-hairline" />
-                    <div className="text-right">
-                      <p className="text-[10px] uppercase tracking-wider text-mute">Optimized</p>
-                      <p className={cn(
-                        "text-xs font-bold transition-colors",
-                        compressedSize < image.originalSize ? "text-geist-success" : "text-geist-warning"
-                      )}>
-                        {isProcessing ? "..." : formatSize(compressedSize)}
-                      </p>
-                    </div>
                   </div>
+
+                  {isCropping && (
+                    <div className="flex flex-wrap gap-2 px-4 pb-4 animate-in fade-in slide-in-from-top-2">
+                      {ASPECT_RATIOS.map((ar) => (
+                        <button
+                          key={ar.label}
+                          onClick={() => {
+                            setAspect(ar.value);
+                            if (ar.value && imgRef.current) {
+                              const { width, height } = imgRef.current;
+                              setCrop(centerCrop(
+                                makeAspectCrop(
+                                  { unit: '%', width: 90 },
+                                  ar.value,
+                                  width,
+                                  height
+                                ),
+                                width,
+                                height
+                              ));
+                            } else {
+                              setCrop(undefined);
+                            }
+                          }}
+                          className={cn(
+                            "whitespace-nowrap rounded-md px-4 py-2 text-[11px] font-bold transition-all border",
+                            aspect === ar.value
+                              ? "bg-ink text-canvas border-ink shadow-v-2" 
+                              : "bg-canvas-soft text-ink border-hairline hover:bg-canvas-soft-2 hover:shadow-v-1"
+                          )}
+                        >
+                          {ar.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </>
             )}

@@ -2,6 +2,7 @@
 
 @theme {
   --color-ink: #171717;
+  --color-mute: #737373;
   --color-canvas: #ffffff;
   --color-canvas-soft: #fafafa;
   --color-canvas-soft-2: #f5f5f5;
@@ -108,6 +109,14 @@
 @utility shadow-v-4 { shadow: var(--shadow-level-4); }
 @utility shadow-v-5 { shadow: var(--shadow-level-5); }
 
+@utility no-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* react-easy-crop overrides */
 .react-easy-crop_Container {
   @apply rounded-xl;
@@ -116,6 +125,20 @@
 .react-easy-crop_CropArea {
   @apply border-2 border-canvas shadow-[0_0_0_9999px_rgba(0,0,0,0.5)];
   box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+}
+
+.react-easy-crop_CropArea::after {
+  content: var(--crop-dims, "");
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  @apply bg-ink/50 text-canvas px-2 py-1 rounded text-[10px] font-mono whitespace-nowrap pointer-events-none opacity-0 transition-opacity;
+}
+
+.react-easy-crop_CropArea:hover::after,
+.react-easy-crop_Container:active .react-easy-crop_CropArea::after {
+  @apply opacity-100;
 }
 
 /* Custom Range Input */

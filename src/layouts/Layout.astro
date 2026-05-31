@@ -11,13 +11,13 @@ interface Props {
 
 const { 
 	title, 
-	description = "Compress images online for free without losing quality. Optimize image size to 100kb, 50kb, or 20kb easily with our secure, local image optimizer.",
+	description = "Compress images online for free without losing quality. Optimize image size to 100kb, 50kb, or 20kb easily with our secure, local image ninja.",
 	keywords = "compress image, compress image size, compress image online, compress image file, compress image free, compress image without losing quality",
 	ogImage = "/favicon-96x96.png",
 	ogType = "website"
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imagoptimize.com");
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imagninja.com");
 ---
 
 <!doctype html>
@@ -181,7 +181,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imagopti
 			<div class="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 				<a href="/" class="flex items-center gap-2">
 					<img src="/favicon-96x96.png" alt="Logo" class="h-6 w-6 rounded-sm" />
-					<span class="text-sm font-semibold tracking-tight text-ink">Image Optimizer</span>
+					<span class="text-sm font-semibold tracking-tight text-ink">ImagNinja</span>
 				</a>
 				<div class="flex items-center gap-6">
 					<div class="hidden md:flex items-center gap-3">
@@ -446,7 +446,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imagopti
 					<div class="col-span-1 md:col-span-2">
 						<a href="/" class="flex items-center gap-2 mb-4">
 							<img src="/favicon-96x96.png" alt="Logo" class="h-6 w-6 rounded-sm" />
-							<span class="text-sm font-semibold tracking-tight text-ink">Image Optimizer</span>
+							<span class="text-sm font-semibold tracking-tight text-ink">ImagNinja</span>
 						</a>
 						<p class="text-xs text-mute max-w-xs leading-relaxed">
 							The fastest, most secure way to optimize your images. Everything happens locally in your browser. Private by design.
@@ -471,7 +471,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://imagopti
 					</div>
 				</div>
 				<div class="pt-8 border-t border-hairline flex flex-col items-center justify-between gap-6 sm:flex-row">
-					<p class="text-[10px] uppercase tracking-widest text-mute font-medium">© 2026 imagoptimize.com • All rights reserved.</p>
+					<p class="text-[10px] uppercase tracking-widest text-mute font-medium">© {new Date().getFullYear()} imagninja.com • All rights reserved.</p>
 				</div>
 			</div>
 		</footer>
