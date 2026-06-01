@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://imagninja.com/sitemap.xml
+Sitemap: https://mrcompress.com/sitemap.xml

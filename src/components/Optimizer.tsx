@@ -474,6 +474,7 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
                           src={image.preview}
                           alt="Crop preview"
                           onLoad={onImageLoad}
+                          loading="eager"
                           style={{ transform: `rotate(${rotation}deg)`, maxHeight: '450px' }}
                         />
                       </ReactCrop>
@@ -483,6 +484,7 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
                       <img 
                         src={isComparing ? image.preview : (previewUrl || image.preview)} 
                         alt="Preview" 
+                        loading="eager"
                         className="max-h-[450px] max-w-full object-contain shadow-v-2 rounded-sm"
                         style={(!previewUrl || isComparing) ? { transform: `rotate(${rotation}deg)` } : {}}
                       />
@@ -640,7 +642,7 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <label className="text-xs font-medium text-ink">{t('optimizer.output_format')}</label>
+                    <p className="text-xs font-medium text-ink">{t('optimizer.output_format')}</p>
                     <div className="grid grid-cols-2 gap-2">
                       {OUTPUT_FORMATS.map((format) => (
                         <button
@@ -663,7 +665,7 @@ export default function Optimizer({ initialTab = 'compress' }: { initialTab?: 'c
 
                 <div className="space-y-4 pt-4 border-t border-hairline">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-medium text-ink">{t('optimizer.dimensions')}</label>
+                    <p className="text-xs font-medium text-ink">{t('optimizer.dimensions')}</p>
                     <div className="flex items-center gap-2">
                       <input 
                         type="checkbox" 
