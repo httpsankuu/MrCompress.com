@@ -2,12 +2,76 @@
 import Layout from '../layouts/Layout.astro';
 import Optimizer from '../components/Optimizer';
 import Hero from '../components/Hero';
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How to compress an image?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "To compress an image, simply drag and drop your file into our optimizer. Adjust the quality slider to find the perfect balance between file size and clarity, then click the download button. Everything happens locally in your browser for maximum privacy."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How to compress image size?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can compress image size by reducing the quality percentage or by resizing the image's pixel dimensions. Our tool shows you a live preview of the final file size so you can achieve the exact optimization you need."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How to compress image on iPhone?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "To compress an image on an iPhone, open our website in Safari, upload a photo from your library, adjust the settings as needed, and save the optimized image directly back to your Photos app. No extra apps required."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How to compress image without losing quality?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "To compress an image without losing quality, use our advanced algorithms that remove unnecessary metadata and redundant pixel data. While 'lossless' compression is available, even our 'lossy' settings are designed to be visually indistinguishable from the original."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How to compress image file size?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Reducing image file size is easy: select your file, choose a modern format like WebP or AVIF for better compression ratios, and lower the quality slider until you reach your target size."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How to compress an image on Mac?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "On a Mac, you can compress an image by using our online tool in any browser. It's a faster alternative to using built-in tools like Preview, especially when you need to convert formats or target specific file sizes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Compress image to 20kb?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "To compress an image to 20kb, you may need to reduce the dimensions (width and height) and lower the quality setting. Our real-time size counter helps you see exactly when you've reached the 20kb threshold."
+      }
+    }
+  ]
+};
 ---
 
 <Layout 
 	title="MrCompress - Fast, Secure & Free Online Image Optimizer"
 	description="Compress and convert images online without losing quality. Support for PNG, JPG, WebP, AVIF, HEIC and PDF. All processing happens locally in your browser."
 >
+	<script type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
 	<Hero client:only="react" />
 
 	<section id="tool" class="pb-24">

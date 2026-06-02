@@ -72,6 +72,13 @@
   }
 }
 
+/* Theme Icon Toggling */
+#sun-icon { display: none; }
+#moon-icon { display: block; }
+
+.dark #sun-icon { display: block !important; }
+.dark #moon-icon { display: none !important; }
+
 @layer base {
   body {
     @apply text-ink font-geist antialiased transition-colors duration-200;

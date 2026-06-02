@@ -15,11 +15,41 @@ const {
 	title, 
 	description = "Compress images online for free without losing quality. Optimize image size to 100kb, 50kb, or 20kb easily with our secure, local MrCompress.",
 	keywords = "compress image, compress image size, compress image online, compress image file, compress image free, compress image without losing quality",
-	ogImage = "/favicon-96x96.png",
+	ogImage = "/web-app-manifest-512x512.png",
 	ogType = "website"
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://mrcompress.pages.dev");
+const supportedLanguages = ['en', 'es', 'zh', 'hi', 'ar', 'fr', 'pt', 'ru', 'ja', 'de'];
+
+const getHreflangUrl = (lang: string) => {
+	const url = new URL(Astro.url.pathname, Astro.site || "https://mrcompress.pages.dev");
+	url.searchParams.set('lang', lang);
+	return url.toString();
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "name": "MrCompress",
+      "url": "https://mrcompress.pages.dev",
+      "logo": "https://mrcompress.pages.dev/favicon-96x96.png"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "MrCompress",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  ]
+};
 ---
 
 <!doctype html>
@@ -58,9 +88,50 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://mrcompre
 		<meta property="twitter:description" content={description} />
 		<meta property="twitter:image" content={new URL(ogImage, Astro.url)} />
 
+		<!-- Hreflang Tags -->
+		{supportedLanguages.map(lang => (
+			<link rel="alternate" hreflang={lang} href={getHreflangUrl(lang)} />
+		))}
+		<link rel="alternate" hreflang="x-default" href={getHreflangUrl('en')} />
+
+		<!-- JSON-LD -->
+		<script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+		<!-- Analytics -->
+		<script defer data-domain="mrcompress.pages.dev" src="https://plausible.io/js/script.js"></script>
+
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+		<script is:inline>
+			const getTheme = () => {
+				if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+					return localStorage.getItem('theme');
+				}
+				return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+			};
+
+			const applyTheme = (theme) => {
+				if (theme === 'dark') {
+					document.documentElement.classList.add('dark');
+				} else {
+					document.documentElement.classList.remove('dark');
+				}
+				localStorage.setItem('theme', theme);
+			};
+
+			window.toggleTheme = () => {
+				const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+				const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+				applyTheme(newTheme);
+			};
+
+			// Initial sync
+			applyTheme(getTheme());
+
+			// Sync after navigation
+			document.addEventListener('astro:after-swap', () => applyTheme(getTheme()));
+		</script>
 		<slot name="head" />
 	</head>
 	<body class="selection:bg-ink selection:text-canvas relative overflow-x-hidden min-h-screen">
@@ -88,7 +159,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://mrcompre
 							Convert
 						</a>
 						<a href="/social" class="text-xs font-medium text-mute hover:text-ink transition-colors px-1">Social</a>
-						<a href="/remove-background" class="text-xs font-medium text-mute hover:text-ink transition-colors px-1">Remove BG</a>
 						<div class="w-px h-4 bg-hairline mx-2"></div>
 						<a href="/about" class="text-xs font-medium text-mute hover:text-ink transition-colors px-1">About</a>
 					</div>
@@ -98,10 +168,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://mrcompre
 						
 						<button 
 							id="theme-toggle"
+							onclick="window.toggleTheme()"
 							class="flex h-8 w-8 items-center justify-center rounded-geist border border-hairline bg-canvas text-ink shadow-v-1 transition-all hover:bg-canvas-soft-2"
 							aria-label="Toggle dark mode"
 						>
-							<svg id="sun-icon" class="hidden h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<svg id="sun-icon" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1m-16 0H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
 							</svg>
 							<svg id="moon-icon" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -146,10 +217,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://mrcompre
 						Social Resizer
 						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
 					</a>
-					<a href="/remove-background" class="flex items-center justify-between px-6 py-4 rounded-2xl border border-hairline bg-canvas text-ink font-bold shadow-v-2">
-						Remove BG
-						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
-					</a>
 					<div class="h-px bg-hairline my-4"></div>
 					<a href="/about" class="px-6 py-3 text-lg font-medium text-mute hover:text-ink">About Us</a>
 					<a href="/privacy" class="px-6 py-3 text-lg font-medium text-mute hover:text-ink">Privacy Policy</a>
@@ -158,73 +225,85 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://mrcompre
 		</div>
 
 		<script is:inline>
-			const theme = (() => {
-				if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-					return localStorage.getItem('theme');
+			// Language Logic
+			const initLang = (() => {
+				if (typeof localStorage !== 'undefined' && localStorage.getItem('i18nextLng')) {
+					return localStorage.getItem('i18nextLng');
 				}
-				if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-					return 'dark';
-				}
-				return 'light';
+				return 'en';
 			})();
-		
-			if (theme === 'light') {
-				document.documentElement.classList.remove('dark');
-			} else {
-				document.documentElement.classList.add('dark');
+			
+			if (initLang) {
+				const shortLang = initLang.split('-')[0];
+				document.documentElement.lang = shortLang;
+				document.documentElement.dir = shortLang === 'ar' ? 'rtl' : 'ltr';
 			}
-		
-			window.localStorage.setItem('theme', theme);
-		
-			const handleToggleClick = () => {
-				const element = document.documentElement;
-				element.classList.toggle("dark");
-		
-				const isDark = element.classList.contains("dark");
-				localStorage.setItem("theme", isDark ? "dark" : "light");
-				updateIcons();
-			}
-
-			const updateIcons = () => {
-				const isDark = document.documentElement.classList.contains("dark");
-				const sunIcon = document.getElementById('sun-icon');
-				const moonIcon = document.getElementById('moon-icon');
-				if (sunIcon && moonIcon) {
-					sunIcon.classList.toggle('hidden', !isDark);
-					moonIcon.classList.toggle('hidden', isDark);
-				}
-			}
-		
-			const themeToggle = document.getElementById("theme-toggle");
-			if (themeToggle) {
-				themeToggle.addEventListener("click", handleToggleClick);
-			}
-			updateIcons();
 
 			// Mobile Menu Logic
 			const mobileMenuButton = document.getElementById('mobile-menu-button');
 			const closeMobileMenuButton = document.getElementById('close-mobile-menu');
 			const mobileMenu = document.getElementById('mobile-menu');
 
-			if (mobileMenuButton && mobileMenu && closeMobileMenuButton) {
-				mobileMenuButton.addEventListener('click', () => {
-					mobileMenu.classList.remove('hidden');
-					document.body.style.overflow = 'hidden';
-				});
+			const setupMobileMenu = () => {
+				if (mobileMenuButton && mobileMenu && closeMobileMenuButton) {
+					const focusableElements = mobileMenu.querySelectorAll('a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select');
+					const firstFocusableElement = focusableElements[0];
+					const lastFocusableElement = focusableElements[focusableElements.length - 1];
 
-				closeMobileMenuButton.addEventListener('click', () => {
-					mobileMenu.classList.add('hidden');
-					document.body.style.overflow = '';
-				});
-
-				// Close on link click
-				mobileMenu.querySelectorAll('a').forEach(link => {
-					link.addEventListener('click', () => {
+					const closeMenu = () => {
 						mobileMenu.classList.add('hidden');
 						document.body.style.overflow = '';
+						mobileMenuButton.focus();
+					};
+
+					mobileMenuButton.addEventListener('click', () => {
+						mobileMenu.classList.remove('hidden');
+						document.body.style.overflow = 'hidden';
+						if (firstFocusableElement) (firstFocusableElement as HTMLElement).focus();
 					});
+
+					closeMobileMenuButton.addEventListener('click', closeMenu);
+
+					mobileMenu.addEventListener('keydown', (e) => {
+						if (e.key === 'Escape') closeMenu();
+						if (e.key === 'Tab') {
+							if (e.shiftKey) {
+								if (document.activeElement === firstFocusableElement) {
+									(lastFocusableElement as HTMLElement).focus();
+									e.preventDefault();
+								}
+							} else {
+								if (document.activeElement === lastFocusableElement) {
+									(firstFocusableElement as HTMLElement).focus();
+									e.preventDefault();
+								}
+							}
+						}
+					});
+
+					// Close on link click
+					mobileMenu.querySelectorAll('a').forEach(link => {
+						link.addEventListener('click', closeMenu);
+					});
+				}
+			}
+			setupMobileMenu();
+			document.addEventListener('astro:after-swap', setupMobileMenu);
+
+			// Active Link Logic
+			const setupActiveLinks = () => {
+				const currentPath = window.location.pathname;
+				document.querySelectorAll('nav a').forEach(link => {
+					if (link.getAttribute('href') === currentPath && currentPath !== '/') {
+						link.setAttribute('aria-current', 'page');
+						link.classList.add('opacity-100');
+					} else if (link.getAttribute('href') === '/' && currentPath === '/') {
+						link.setAttribute('aria-current', 'page');
+					}
 				});
 			}
+			setupActiveLinks();
+			document.addEventListener('astro:after-swap', setupActiveLinks);
 		</script>
 		<main id="main-content">
 			<slot />
@@ -264,16 +343,14 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://mrcompre
 				</div>
 			</div>
 		</footer>
-	</body>
-</html>
-r:text-ink transition-colors">Terms & Conditions</a></li>
-						</ul>
-					</div>
-				</div>
-				<div class="pt-8 border-t border-hairline flex flex-col items-center justify-between gap-6 sm:flex-row">
-					<p class="text-[10px] uppercase tracking-widest text-mute font-medium">© {new Date().getFullYear()} mrcompress.com • All rights reserved.</p>
-				</div>
-			</div>
-		</footer>
+		<script is:inline>
+			if ('serviceWorker' in navigator) {
+				window.addEventListener('load', () => {
+					navigator.serviceWorker.register('/sw.js').catch(err => {
+						console.error('ServiceWorker registration failed: ', err);
+					});
+				});
+			}
+		</script>
 	</body>
 </html>

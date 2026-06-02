@@ -9,7 +9,6 @@ import { jsPDF } from 'jspdf';
 import * as pdfjsLib from 'pdfjs-dist';
 import JSZip from 'jszip';
 import EXIF from 'exif-js';
-import { removeBackground } from '@imgly/background-removal';
 import { optimize } from 'svgo/browser';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
@@ -42,13 +41,12 @@ interface ImageState {
 
 interface CropArea { x: number; y: number; width: number; height: number; }
 
-type TabType = 'compress' | 'convert' | 'social' | 'remove-bg';
+type TabType = 'compress' | 'convert' | 'social';
 
 interface OptimizerProps {
   initialTab?: TabType;
   allowedTabs?: TabType[];
   showSocialPresets?: boolean;
-  showRemoveBg?: boolean;
   initialOutputFormat?: string;
   initialQuality?: number;
 }
@@ -57,7 +55,6 @@ export default function Optimizer({
   initialTab = 'compress',
   allowedTabs = ['compress', 'convert'],
   showSocialPresets = false,
-  showRemoveBg = false,
   initialOutputFormat = 'original',
   initialQuality = 80
 }: OptimizerProps) {
@@ -87,7 +84,6 @@ export default function Optimizer({
   const [isComparing, setIsComparing] = useState(false);
   const [compareOffset, setCompareOffset] = useState(50);
   const [batchProgress, setBatchProgress] = useState(0);
-  const [isRemovingBg, setIsRemovingBg] = useState(false);
   const [exifData, setExifData] = useState<Record<string, any> | null>(null);
   const [watermarkText, setWatermarkText] = useState('');
   const [watermarkOpacity, setWatermarkOpacity] = useState(50);
@@ -210,25 +206,6 @@ export default function Optimizer({
       toast.success("Undone");
   };
 
-  const handleRemoveBg = async () => {
-    if (!currentImage || currentImage.isSvg) return;
-    setIsRemovingBg(true);
-    try {
-      const resultBlob = await removeBackground(currentImage.preview, { debug: false, model: 'isnet_fp16' });
-      const reader = new FileReader();
-      reader.onload = () => {
-        const url = reader.result as string;
-        saveToHistory(url);
-        setOutputFormat('image/png');
-        toast.success(t('optimizer.bg_removed'));
-      };
-      reader.readAsDataURL(resultBlob);
-    } catch (e) { 
-        toast.error("AI failed. Switch to Manual Eraser?");
-        initEraser(); 
-    } finally { setIsRemovingBg(false); }
-  };
-
   // Manual Eraser Logic
   const initEraser = () => {
       if (!currentImage) return;
@@ -312,9 +289,7 @@ export default function Optimizer({
         const img = new Image();
         img.src = currentImage.preview;
         img.onload = () => {
-            // @ts-ignore
-            EXIF.getData(img, function() {
-                // @ts-ignore
+            EXIF.getData(img as any, function(this: any) {
                 const allMetadata = EXIF.getAllTags(this);
                 if (Object.keys(allMetadata).length > 0) {
                     setExifData(allMetadata);
@@ -433,12 +408,12 @@ export default function Optimizer({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
-      {(isConvertingHeic || isConvertingPdf || isRemovingBg) && (
+      {(isConvertingHeic || isConvertingPdf) && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-canvas/80 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-4">
             <div className="h-10 w-10 animate-spin rounded-full border-2 border-hairline border-t-ink"></div>
             <p className="text-sm font-medium text-ink">
-              {isRemovingBg ? t('optimizer.removing_bg') : (isConvertingHeic ? t('optimizer.converting_heic') : t('optimizer.rendering_pdf'))}
+              {isConvertingHeic ? t('optimizer.converting_heic') : t('optimizer.rendering_pdf')}
             </p>
           </div>
         </div>
@@ -454,14 +429,13 @@ export default function Optimizer({
                     {tab === 'compress' && <Sliders className="h-3.5 w-3.5" />}
                     {tab === 'convert' && <ArrowRightLeft className="h-3.5 w-3.5" />}
                     {tab === 'social' && <Share2 className="h-3.5 w-3.5" />}
-                    {tab === 'remove-bg' && <Sparkles className="h-3.5 w-3.5" />}
                     {t(`optimizer.${tab}_tab`)}
                   </button>
                 ))}
               </div>
             )}
             
-            {(isEraserMode || activeTab === 'remove-bg') && images.length > 0 && (
+            {isEraserMode && images.length > 0 && (
               <div className="flex items-center justify-between px-4 py-3 bg-ink text-canvas z-50 relative">
                 <div className="flex items-center gap-4">
                   <div className="flex bg-canvas/10 rounded-lg p-1 gap-1">
@@ -487,11 +461,7 @@ export default function Optimizer({
                   ) : (
                     currentImage.history.length > 0 && <button onClick={handleGlobalUndo} className="px-3 py-1.5 rounded-geist border border-canvas/20 text-canvas hover:bg-canvas/10 flex items-center gap-2 text-[10px] font-bold uppercase mr-2"><Undo2 className="h-3.5 w-3.5" /> Undo</button>
                   )}
-                  {!isEraserMode ? (
-                      <button onClick={handleRemoveBg} disabled={isRemovingBg} className="px-4 py-1.5 rounded-geist bg-geist-success text-canvas text-[10px] font-black uppercase hover:opacity-90 flex items-center gap-2 shadow-v-2">
-                        <Sparkles className="h-3 w-3" /> {isRemovingBg ? "Running AI..." : "Magic AI Removal"}
-                      </button>
-                  ) : (
+                  {isEraserMode && (
                     <>
                         <button onClick={() => setIsEraserMode(false)} className="px-3 py-1.5 rounded-geist border border-canvas/20 text-[10px] font-bold uppercase hover:bg-canvas/10">Cancel</button>
                         <button onClick={applyEraser} className="px-3 py-1.5 rounded-geist bg-canvas text-ink text-[10px] font-bold uppercase hover:opacity-90">Apply Changes</button>
@@ -588,14 +558,9 @@ export default function Optimizer({
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 py-4 gap-6">
                     <div className="flex items-center gap-2">
                       {!currentImage.isSvg && (
-                        <>
-                          <button onClick={() => setIsCropping(!isCropping)} className={cn("flex items-center gap-2 rounded-geist-marketing px-4 py-2 text-xs font-semibold transition-all", isCropping ? "bg-ink text-canvas shadow-v-3" : "bg-canvas-soft text-ink hover:bg-canvas-soft-2 border border-hairline")}>
-                            <Scissors className="h-4 w-4" />{isCropping ? t('optimizer.done_editing') : t('optimizer.crop_rotate')}
-                          </button>
-                          {(showRemoveBg || activeTab === 'remove-bg') && !isCropping && (
-                            <button onClick={() => setActiveTab('remove-bg')} className="flex items-center gap-2 px-4 py-2 text-xs font-bold bg-ink text-canvas rounded-geist-marketing shadow-v-2 hover:opacity-90 transition-all"><Sparkles className="h-4 w-4" />{t('optimizer.remove_bg')}</button>
-                          )}
-                        </>
+                        <button onClick={() => setIsCropping(!isCropping)} className={cn("flex items-center gap-2 rounded-geist-marketing px-4 py-2 text-xs font-semibold transition-all", isCropping ? "bg-ink text-canvas shadow-v-3" : "bg-canvas-soft text-ink hover:bg-canvas-soft-2 border border-hairline")}>
+                          <Scissors className="h-4 w-4" />{isCropping ? t('optimizer.done_editing') : t('optimizer.crop_rotate')}
+                        </button>
                       )}
                     </div>
                     <div className="flex items-center gap-8 bg-canvas-soft/80 rounded-xl px-6 py-3 border border-hairline">
@@ -624,9 +589,9 @@ export default function Optimizer({
 
         <div className="lg:col-span-4">
           <div className="sticky top-24 flex flex-col gap-6">
-            <div className={cn("rounded-xl border border-hairline bg-canvas p-6 shadow-v-2 transition-opacity", (isEraserMode || activeTab === 'remove-bg') && "opacity-50 pointer-events-none")}>
+            <div className={cn("rounded-xl border border-hairline bg-canvas p-6 shadow-v-2 transition-opacity", (isEraserMode) && "opacity-50 pointer-events-none")}>
               <div className="space-y-6">
-                {!currentImage?.isSvg && (activeTab === 'compress' || activeTab === 'remove-bg') && (
+                {!currentImage?.isSvg && (activeTab === 'compress') && (
                   <div className="space-y-6">
                     <div className="flex items-center justify-between"><label className="text-xs font-medium text-ink">{t('optimizer.quality')}</label><span className="text-xs font-bold text-ink">{quality}%</span></div>
                     <input type="range" min="1" max="100" value={quality} disabled={images.length === 0} onChange={(e) => setQuality(parseInt(e.target.value))} className="w-full" />
@@ -657,7 +622,7 @@ export default function Optimizer({
                     </div>
                   </div>
                 )}
-                {!currentImage?.isSvg && activeTab !== 'remove-bg' && (
+                {!currentImage?.isSvg && (
                   <div className="space-y-4 pt-4 border-t border-hairline">
                     <div className="flex items-center justify-between"><p className="text-xs font-medium text-ink">{t('optimizer.dimensions')}</p><div className="flex items-center gap-2"><input type="checkbox" id="aspect" checked={maintainAspectRatio} disabled={images.length === 0} onChange={(e) => setMaintainAspectRatio(e.target.checked)} className="h-3 w-3 rounded-sm border-hairline accent-ink" /><label htmlFor="aspect" className="text-[10px] text-mute cursor-pointer">{t('optimizer.lock_aspect')}</label></div></div>
                     <div className="grid grid-cols-2 gap-4">
@@ -666,7 +631,7 @@ export default function Optimizer({
                     </div>
                   </div>
                 )}
-                {!currentImage?.isSvg && activeTab !== 'remove-bg' && (
+                {!currentImage?.isSvg && (
                   <div className="space-y-4 pt-4 border-t border-hairline">
                     <p className="text-xs font-medium text-ink flex items-center gap-2"><Sparkles className="h-3.5 w-3.5 text-geist-link" /> Watermark</p>
                     <div className="space-y-3">
