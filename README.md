@@ -1,46 +1,75 @@
-# Astro Starter Kit: Basics
+# MrCompress 🚀
 
-```sh
-npm create astro@latest -- --template basics
-```
+**MrCompress** is a fast, secure, and free online image optimizer and converter designed for the modern web. Built with a focus on performance and privacy, it handles all image processing locally in your browser, ensuring your data never leaves your device.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+![MrCompress Banner](src/assets/background.svg)
 
-## 🚀 Project Structure
+## ✨ Key Features
 
-Inside of your Astro project, you'll see the following folders and files:
+- **🔒 Privacy First:** All compression and conversion happens client-side. Your images are never uploaded to a server.
+- **⚡ Blazing Fast:** Leveraging modern browser capabilities for near-instant processing.
+- **🖼️ Comprehensive Support:** Works with PNG, JPG, WebP, AVIF, and even Apple's HEIC format.
+- **📄 PDF Integration:** Convert your images directly to high-quality PDF documents.
+- **🛠️ Precision Tools:**
+  - **Smart Compression:** Fine-tune quality to achieve target file sizes (e.g., 20kb, 50kb, 100kb).
+  - **Pro Cropping:** Use aspect ratio presets (1:1, 16:9, 9:16 for TikTok/Reels, etc.) or free-form cropping.
+  - **Resize & Rotate:** Easily adjust dimensions while maintaining aspect ratio.
+- **🌍 Multi-language:** Fully localized in 10 languages including English, Arabic, German, Spanish, French, Hindi, Japanese, Portuguese, Russian, and Chinese.
+- **📱 Mobile Optimized:** A seamless experience across desktop, iPhone, and Android devices.
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+## 🛠️ Tech Stack
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+- **Framework:** [Astro](https://astro.build/) (v6.4)
+- **UI Library:** [React](https://react.dev/) (v19)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) (v4)
+- **Icons:** [Lucide React](https://lucide.dev/)
+- **i18n:** [i18next](https://www.i18next.com/)
+- **Deployment:** Optimized for [Cloudflare Pages](https://pages.cloudflare.com/) via [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js >= 22.12.0
+- npm
+
+### Installation
+
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/your-username/mrcompress.git
+   cd mrcompress
+   ```
+
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+
+3. Start the development server:
+   ```sh
+   npm run dev
+   ```
+
+4. Build for production:
+   ```sh
+   npm run build
+   ```
 
 ## 🧞 Commands
 
-All commands are run from the root of the project, from a terminal:
+| Command | Action |
+| :--- | :--- |
+| `npm install` | Installs dependencies |
+| `npm run dev` | Starts local dev server at `localhost:4321` |
+| `npm run build` | Build your production site to `./dist/` |
+| `npm run preview` | Preview your build locally |
+| `npm run generate-types` | Generate types for Cloudflare bindings |
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## 🎨 Design Philosophy
 
-## 👀 Want to learn more?
+MrCompress follows a minimalist, high-signal design language inspired by Vercel. It prioritizes clarity, typography, and subtle interactive feedback to provide a premium "developer-tool" feel.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+---
+
+Developed with ❤️ for a faster, more private web.
