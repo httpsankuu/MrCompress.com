@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @theme {
   --color-ink: #171717;
@@ -12,6 +13,8 @@
   --color-geist-success: #0070f3;
   --color-geist-error: #ee0000;
   --color-geist-warning: #f5a623;
+  --color-body: #4d4d4d;
+  --color-cyan-deep: #29bc9b;
 
   /* Dark Mode Tokens */
   --dark-ink: #ededed;
@@ -20,6 +23,7 @@
   --dark-canvas-soft-2: #111111;
   --dark-hairline: #333333;
   --dark-hairline-strong: #444444;
+  --dark-body: #a3a3a3;
 
   --font-geist: "Inter", "Geist", system-ui, -apple-system, sans-serif;
   --font-geist-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
@@ -81,6 +85,7 @@
     --color-canvas-soft-2: var(--dark-canvas-soft-2);
     --color-hairline: var(--dark-hairline);
     --color-hairline-strong: var(--dark-hairline-strong);
+    --color-body: var(--dark-body);
     color-scheme: dark;
   }
 }
@@ -131,30 +136,6 @@
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-/* react-easy-crop overrides */
-.react-easy-crop_Container {
-  @apply rounded-xl;
-}
-
-.react-easy-crop_CropArea {
-  @apply border-2 border-canvas shadow-[0_0_0_9999px_rgba(0,0,0,0.5)];
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
-}
-
-.react-easy-crop_CropArea::after {
-  content: var(--crop-dims, "");
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  @apply bg-ink/50 text-canvas px-2 py-1 rounded text-[10px] font-mono whitespace-nowrap pointer-events-none opacity-0 transition-opacity;
-}
-
-.react-easy-crop_CropArea:hover::after,
-.react-easy-crop_Container:active .react-easy-crop_CropArea::after {
-  @apply opacity-100;
 }
 
 /* Custom Range Input */

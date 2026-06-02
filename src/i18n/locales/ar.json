@@ -1,16 +1,15 @@
 {
   "nav": {
-    "compress": "ضغظ",
+    "compress": "ضغط",
     "convert": "تحويل",
     "about": "حول",
-    "contact": "اتصل بنا",
     "privacy": "الخصوصية"
   },
   "footer": {
     "rights": "جميع الحقوق محفوظة."
   },
   "optimizer": {
-    "compress_tab": "ضغظ الصورة",
+    "compress_tab": "ضغط الصورة",
     "convert_tab": "تحويل التنسيق",
     "upload_text": "انقر للتحميل أو اسحب وأفلت",
     "upload_hint": "PNG أو JPG أو WebP أو HEIC أو PDF (بحد أقصى 25 ميجابايت)",
