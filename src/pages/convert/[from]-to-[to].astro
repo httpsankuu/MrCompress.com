@@ -1,0 +1,74 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Optimizer from '../../components/Optimizer';
+
+export function getStaticPaths() {
+  const pairs = [
+    { from: 'heic', to: 'jpg', format: 'image/jpeg' },
+    { from: 'heic', to: 'png', format: 'image/png' },
+    { from: 'png', to: 'webp', format: 'image/webp' },
+    { from: 'webp', to: 'jpg', format: 'image/jpeg' },
+    { from: 'jpg', to: 'webp', format: 'image/webp' },
+    { from: 'pdf', to: 'jpg', format: 'image/jpeg' },
+    { from: 'pdf', to: 'png', format: 'image/png' },
+    { from: 'png', to: 'jpg', format: 'image/jpeg' },
+    { from: 'jpg', to: 'png', format: 'image/png' },
+  ];
+
+  return pairs.map(p => ({
+    params: { from: p.from, to: p.to },
+    props: { format: p.format }
+  }));
+}
+
+const { from, to } = Astro.params;
+const { format } = Astro.props;
+
+const title = `Convert ${from.toUpperCase()} to ${to.toUpperCase()} Online - Fast & Secure`;
+const description = `Convert your ${from.toUpperCase()} files to ${to.toUpperCase()} format online for free. No uploads required, everything happens locally in your browser for maximum privacy.`;
+const keywords = `${from} to ${to}, convert ${from} to ${to}, online ${from} converter, secure image conversion`;
+---
+
+<Layout 
+	title={title}
+	description={description}
+	keywords={keywords}
+>
+	<section class="relative overflow-hidden pt-16 pb-8 sm:pt-24">
+		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
+			<h1 class="text-4xl font-bold tracking-tight text-ink sm:text-6xl mb-4 max-w-4xl">
+				Convert <span class="bg-gradient-to-r from-geist-link to-cyan-deep bg-clip-text text-transparent">{from.toUpperCase()} to {to.toUpperCase()}.</span>
+			</h1>
+			<p class="mx-auto max-w-2xl text-lg text-body mb-6 leading-relaxed">
+				High-quality {from.toUpperCase()} to {to.toUpperCase()} conversion. Fast, secure, and 100% private.
+			</p>
+		</div>
+	</section>
+
+	<section class="py-12">
+		<Optimizer client:only="react" initialTab="convert" initialOutputFormat={format} />
+	</section>
+
+    <section class="py-16 bg-canvas-soft border-y border-hairline">
+        <div class="mx-auto max-w-4xl px-4 text-center">
+            <h2 class="text-3xl font-bold text-ink mb-8">How to convert {from.toUpperCase()} to {to.toUpperCase()}?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <div class="p-6 bg-canvas rounded-xl shadow-v-1">
+                    <div class="text-geist-link font-black text-2xl mb-2">01.</div>
+                    <h3 class="font-bold text-ink mb-2">Select Files</h3>
+                    <p class="text-sm text-mute">Drag and drop your {from.toUpperCase()} files or click to upload. You can process multiple files at once.</p>
+                </div>
+                <div class="p-6 bg-canvas rounded-xl shadow-v-1">
+                    <div class="text-geist-link font-black text-2xl mb-2">02.</div>
+                    <h3 class="font-bold text-ink mb-2">Configure</h3>
+                    <p class="text-sm text-mute">Adjust quality and dimensions if needed. The output format is already set to {to.toUpperCase()}.</p>
+                </div>
+                <div class="p-6 bg-canvas rounded-xl shadow-v-1">
+                    <div class="text-geist-link font-black text-2xl mb-2">03.</div>
+                    <h3 class="font-bold text-ink mb-2">Download</h3>
+                    <p class="text-sm text-mute">Click download to save your converted files. Everything is processed in your browser.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</Layout>

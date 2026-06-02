@@ -1,0 +1,55 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const title = "Resource Hub - Learn about Image Optimization & Privacy";
+const description = "Educational articles about next-gen image formats (AVIF, WebP), web performance, and digital privacy. Master the art of image optimization.";
+---
+
+<Layout 
+	title={title}
+	description={description}
+>
+	<section class="relative overflow-hidden pt-16 pb-12 sm:pt-24">
+		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
+			<h1 class="text-4xl font-bold tracking-tight text-ink sm:text-6xl mb-4 max-w-4xl">
+				Resource <span class="bg-gradient-to-r from-geist-link to-cyan-deep bg-clip-text text-transparent">Hub.</span>
+			</h1>
+			<p class="mx-auto max-w-2xl text-lg text-body mb-6 leading-relaxed">
+				Deep dives into image compression, web performance, and why privacy matters.
+			</p>
+		</div>
+	</section>
+
+	<section class="py-12 bg-canvas">
+		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+			{posts.length > 0 ? (
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+					{posts.map((post) => (
+						<a href={`/learn/${post.id}/`} class="group block p-6 rounded-2xl border border-hairline bg-canvas shadow-v-1 transition-all hover:shadow-v-3 hover:-translate-y-1">
+							<div class="mb-4 flex items-center justify-between">
+								<span class="px-3 py-1 rounded-full bg-geist-link/10 text-geist-link text-[10px] font-black uppercase tracking-wider">{post.data.category}</span>
+								<span class="text-[10px] text-mute font-medium">{post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+							</div>
+							<h2 class="text-xl font-bold text-ink mb-3 group-hover:text-geist-link transition-colors">{post.data.title}</h2>
+							<p class="text-sm text-mute leading-relaxed line-clamp-3">{post.data.description}</p>
+							<div class="mt-6 flex items-center gap-2 text-geist-link text-xs font-bold uppercase tracking-widest">
+								Read More
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+							</div>
+						</a>
+					))}
+				</div>
+			) : (
+				<div class="py-24 text-center">
+					<p class="text-lg text-mute mb-4">No articles found in the hub yet.</p>
+					<p class="text-sm text-mute/50">Check back later for deep dives into optimization and privacy.</p>
+				</div>
+			)}
+		</div>
+	</section>
+</Layout>

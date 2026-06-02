@@ -8,6 +8,7 @@ import heic2any from 'heic2any';
 import { jsPDF } from 'jspdf';
 import * as pdfjsLib from 'pdfjs-dist';
 import JSZip from 'jszip';
+import EXIF from 'exif-js';
 import { removeBackground } from '@imgly/background-removal';
 import { optimize } from 'svgo/browser';
 import { toast } from 'sonner';
@@ -48,18 +49,22 @@ interface OptimizerProps {
   allowedTabs?: TabType[];
   showSocialPresets?: boolean;
   showRemoveBg?: boolean;
+  initialOutputFormat?: string;
+  initialQuality?: number;
 }
 
 export default function Optimizer({ 
   initialTab = 'compress',
   allowedTabs = ['compress', 'convert'],
   showSocialPresets = false,
-  showRemoveBg = false
+  showRemoveBg = false,
+  initialOutputFormat = 'original',
+  initialQuality = 80
 }: OptimizerProps) {
   const { t } = useTranslation();
   const [images, setImages] = useState<ImageState[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [quality, setQuality] = useState(80);
+  const [quality, setQuality] = useState(initialQuality);
   const [targetWidth, setTargetWidth] = useState<number>(0);
   const [targetHeight, setTargetHeight] = useState<number>(0);
   const [maintainAspectRatio, setMaintainAspectRatio] = useState(true);
@@ -74,14 +79,19 @@ export default function Optimizer({
   const [rotation, setRotation] = useState(0);
   const [aspect, setAspect] = useState<number | undefined>(undefined);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [outputFormat, setOutputFormat] = useState('original');
+  const [outputFormat, setOutputFormat] = useState(initialOutputFormat);
   const [isConvertingHeic, setIsConvertingHeic] = useState(false);
   const [isConvertingPdf, setIsConvertingPdf] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isComparing, setIsComparing] = useState(false);
+  const [compareOffset, setCompareOffset] = useState(50);
   const [batchProgress, setBatchProgress] = useState(0);
   const [isRemovingBg, setIsRemovingBg] = useState(false);
+  const [exifData, setExifData] = useState<Record<string, any> | null>(null);
+  const [watermarkText, setWatermarkText] = useState('');
+  const [watermarkOpacity, setWatermarkOpacity] = useState(50);
+  const [watermarkSize, setWatermarkSize] = useState(20);
   
   // Advanced Eraser state
   const [isEraserMode, setIsEraserMode] = useState(false);
@@ -297,6 +307,27 @@ export default function Optimizer({
       }
   };
 
+  useEffect(() => {
+    if (currentImage && !currentImage.isSvg && activeTab !== 'social') {
+        const img = new Image();
+        img.src = currentImage.preview;
+        img.onload = () => {
+            // @ts-ignore
+            EXIF.getData(img, function() {
+                // @ts-ignore
+                const allMetadata = EXIF.getAllTags(this);
+                if (Object.keys(allMetadata).length > 0) {
+                    setExifData(allMetadata);
+                } else {
+                    setExifData(null);
+                }
+            });
+        };
+    } else {
+        setExifData(null);
+    }
+  }, [currentImage, activeIndex]);
+
   const applyEraser = () => {
       if (eraserCanvasRef.current) {
           saveToHistory(eraserCanvasRef.current.toDataURL('image/png'));
@@ -327,6 +358,22 @@ export default function Optimizer({
         sX = (sW - actualSW) / 2; sY = (sH - actualSH) / 2; sW = actualSW; sH = actualSH;
     }
     ctx!.drawImage(sCanvas, sX, sY, sW, sH, 0, 0, canvas.width, canvas.height);
+
+    // Apply Watermark
+    if (watermarkText && watermarkText.trim()) {
+        ctx!.save();
+        const fontSize = (canvas.width * watermarkSize) / 100;
+        ctx!.font = `bold ${fontSize}px Inter, system-ui, sans-serif`;
+        ctx!.fillStyle = `rgba(255, 255, 255, ${watermarkOpacity / 100})`;
+        ctx!.textAlign = 'center';
+        ctx!.textBaseline = 'middle';
+        // Draw diagonal watermark
+        ctx!.translate(canvas.width / 2, canvas.height / 2);
+        ctx!.rotate(-Math.PI / 4);
+        ctx!.fillText(watermarkText, 0, 0);
+        ctx!.restore();
+    }
+
     const tType = outputFormat === 'original' ? imgState.type : outputFormat;
     const ext = mimeToExt[tType] || 'bin';
     if (tType === 'application/pdf') {
@@ -490,12 +537,33 @@ export default function Optimizer({
                       </ReactCrop>
                     </div>
                   ) : (
-                    <div className="relative max-h-full transition-all duration-300">
-                      <img src={isComparing ? currentImage.preview : (previewUrl || currentImage.preview)} alt="Preview" className="max-h-[450px] max-w-full object-contain shadow-v-2 rounded-sm" style={(!previewUrl || isComparing) ? { transform: `rotate(${rotation}deg)` } : {}} />
-                      {previewUrl && !isCropping && (
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
-                          <button onMouseDown={() => setIsComparing(true)} onMouseUp={() => setIsComparing(false)} onMouseLeave={() => setIsComparing(false)} onTouchStart={() => setIsComparing(true)} onTouchEnd={() => setIsComparing(false)} className="bg-ink/80 backdrop-blur-md text-canvas px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-v-4 select-none touch-none">{t('optimizer.hold_compare')}</button>
+                    <div className="relative max-h-full transition-all duration-300 w-full flex items-center justify-center">
+                      {previewUrl && !isCropping ? (
+                        <div className="relative max-h-[450px] max-w-full overflow-hidden shadow-v-2 rounded-sm select-none" style={{ aspectRatio: currentImage.aspectRatio }}>
+                            {/* Original Image (Background) */}
+                            <img src={currentImage.preview} alt="Original" className="h-full w-full object-contain" style={{ transform: `rotate(${rotation}deg)` }} />
+                            
+                            {/* Optimized Image (Foreground, Clipped) */}
+                            <div className="absolute inset-0 pointer-events-none" style={{ clipPath: `inset(0 ${100 - compareOffset}% 0 0)` }}>
+                                <img src={previewUrl} alt="Optimized" className="h-full w-full object-contain" />
+                            </div>
+
+                            {/* Slider Handle */}
+                            <div className="absolute inset-y-0 z-10 w-px bg-canvas shadow-[0_0_10px_rgba(0,0,0,0.5)] cursor-ew-resize" style={{ left: `${compareOffset}%` }}>
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-ink text-canvas shadow-v-4 flex items-center justify-center border-2 border-canvas">
+                                    <ArrowRightLeft className="h-3 w-3" />
+                                </div>
+                            </div>
+
+                            {/* Labels */}
+                            <div className="absolute top-4 left-4 z-20 px-2 py-1 rounded bg-ink/50 backdrop-blur-sm text-canvas text-[10px] font-black uppercase tracking-widest">Original</div>
+                            <div className="absolute top-4 right-4 z-20 px-2 py-1 rounded bg-geist-link/50 backdrop-blur-sm text-canvas text-[10px] font-black uppercase tracking-widest">Optimized</div>
+
+                            {/* Invisible Range Input for Interaction */}
+                            <input type="range" min="0" max="100" value={compareOffset} onChange={(e) => setCompareOffset(parseInt(e.target.value))} className="absolute inset-0 z-30 w-full h-full opacity-0 cursor-ew-resize" />
                         </div>
+                      ) : (
+                        <img src={currentImage.preview} alt="Preview" className="max-h-[450px] max-w-full object-contain shadow-v-2 rounded-sm" style={{ transform: `rotate(${rotation}deg)` }} />
                       )}
                     </div>
                   )}
@@ -598,6 +666,44 @@ export default function Optimizer({
                     </div>
                   </div>
                 )}
+                {!currentImage?.isSvg && activeTab !== 'remove-bg' && (
+                  <div className="space-y-4 pt-4 border-t border-hairline">
+                    <p className="text-xs font-medium text-ink flex items-center gap-2"><Sparkles className="h-3.5 w-3.5 text-geist-link" /> Watermark</p>
+                    <div className="space-y-3">
+                        <input type="text" placeholder="Your Watermark Text" value={watermarkText} onChange={(e) => setWatermarkText(e.target.value)} className="w-full h-9 rounded-geist border border-hairline bg-canvas px-3 text-xs font-medium text-ink focus:outline-none focus:ring-1 focus:ring-geist-link" />
+                        {watermarkText && (
+                            <div className="space-y-4 animate-in fade-in slide-in-from-top-1">
+                                <div className="space-y-2">
+                                    <div className="flex justify-between"><label className="text-[10px] uppercase text-mute font-black">Opacity</label><span className="text-[10px] font-bold text-ink">{watermarkOpacity}%</span></div>
+                                    <input type="range" min="1" max="100" value={watermarkOpacity} onChange={(e) => setWatermarkOpacity(parseInt(e.target.value))} className="w-full h-1 bg-canvas-soft rounded-full appearance-none cursor-pointer" />
+                                </div>
+                                <div className="space-y-2">
+                                    <div className="flex justify-between"><label className="text-[10px] uppercase text-mute font-black">Size</label><span className="text-[10px] font-bold text-ink">{watermarkSize}%</span></div>
+                                    <input type="range" min="5" max="100" value={watermarkSize} onChange={(e) => setWatermarkSize(parseInt(e.target.value))} className="w-full h-1 bg-canvas-soft rounded-full appearance-none cursor-pointer" />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                  </div>
+                )}
+
+                {exifData && (
+                  <div className="space-y-3 pt-4 border-t border-hairline">
+                    <p className="text-xs font-medium text-ink flex items-center justify-between">
+                        <span>Metadata Found</span>
+                        <span className="text-[10px] text-geist-success font-black uppercase bg-geist-success/10 px-2 py-0.5 rounded-full">Will be stripped</span>
+                    </p>
+                    <div className="max-h-32 overflow-y-auto pr-2 space-y-1 no-scrollbar">
+                        {Object.entries(exifData).slice(0, 10).map(([k, v]) => (
+                            <div key={k} className="flex justify-between text-[10px] border-b border-hairline/50 pb-1 last:border-0">
+                                <span className="text-mute truncate max-w-[100px]">{k}</span>
+                                <span className="text-ink font-mono truncate max-w-[120px]">{String(v)}</span>
+                            </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
                 <button onClick={handleDownload} disabled={isProcessing || isDownloading || images.length === 0} className={cn("mt-4 flex w-full items-center justify-center gap-2 rounded-geist-pill py-3 text-sm font-semibold text-canvas shadow-v-4 transition-all hover:opacity-90 disabled:opacity-30", activeTab === 'social' ? "bg-geist-success" : (activeTab === 'compress' ? "bg-ink" : "bg-geist-link"))}>
                   {isDownloading ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-canvas/30 border-t-canvas"></div> : <Download className="h-4 w-4" />}
                   {isDownloading ? (batchProgress > 0 ? `${batchProgress}%` : t('optimizer.preparing')) : (images.length > 1 ? t('optimizer.batch_download', { count: images.length }) : (activeTab === 'compress' ? t('optimizer.download_compressed') : t('optimizer.download_converted')))}

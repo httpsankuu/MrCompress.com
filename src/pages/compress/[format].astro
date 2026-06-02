@@ -1,0 +1,84 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Optimizer from '../../components/Optimizer';
+
+export function getStaticPaths() {
+  const formats = [
+    { name: 'png', label: 'PNG' },
+    { name: 'jpg', label: 'JPEG' },
+    { name: 'jpeg', label: 'JPEG' },
+    { name: 'webp', label: 'WebP' },
+    { name: 'avif', label: 'AVIF' },
+    { name: 'svg', label: 'SVG' },
+  ];
+
+  return formats.map(f => ({
+    params: { format: f.name },
+    props: { label: f.label }
+  }));
+}
+
+const { format } = Astro.params;
+const { label } = Astro.props;
+
+const title = `Compress ${label} Online - Reduce ${label} File Size Fast`;
+const description = `Optimize and compress ${label} images online without losing quality. Reduce file size for faster websites and easier sharing. 100% private and local processing.`;
+const keywords = `compress ${format}, reduce ${format} size, optimize ${format} image, online ${format} compressor`;
+---
+
+<Layout 
+	title={title}
+	description={description}
+	keywords={keywords}
+>
+	<section class="relative overflow-hidden pt-16 pb-8 sm:pt-24">
+		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
+			<h1 class="text-4xl font-bold tracking-tight text-ink sm:text-6xl mb-4 max-w-4xl">
+				Compress <span class="bg-gradient-to-r from-geist-link to-cyan-deep bg-clip-text text-transparent">{label} Images.</span>
+			</h1>
+			<p class="mx-auto max-w-2xl text-lg text-body mb-6 leading-relaxed">
+				Shrink your {label} files in seconds. Maintain quality while reducing size significantly.
+			</p>
+		</div>
+	</section>
+
+	<section class="py-12">
+		<Optimizer client:only="react" initialTab="compress" />
+	</section>
+
+    <section class="py-16 bg-canvas-soft border-y border-hairline">
+        <div class="mx-auto max-w-4xl px-4 text-center">
+            <h2 class="text-3xl font-bold text-ink mb-8">Why compress your {label} images?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+                <div class="p-6 bg-canvas rounded-xl shadow-v-1">
+                    <h3 class="font-bold text-ink mb-2 flex items-center gap-2">
+                        <span class="h-6 w-6 rounded-full bg-geist-link/10 text-geist-link flex items-center justify-center text-xs">01</span>
+                        Faster Page Loads
+                    </h3>
+                    <p class="text-sm text-mute">Large images are the #1 cause of slow websites. Compressed {label} files load faster and improve SEO.</p>
+                </div>
+                <div class="p-6 bg-canvas rounded-xl shadow-v-1">
+                    <h3 class="font-bold text-ink mb-2 flex items-center gap-2">
+                        <span class="h-6 w-6 rounded-full bg-geist-link/10 text-geist-link flex items-center justify-center text-xs">02</span>
+                        Save Storage Space
+                    </h3>
+                    <p class="text-sm text-mute">Reduce the space taken by your photo libraries without noticeable loss in visual quality.</p>
+                </div>
+                <div class="p-6 bg-canvas rounded-xl shadow-v-1">
+                    <h3 class="font-bold text-ink mb-2 flex items-center gap-2">
+                        <span class="h-6 w-6 rounded-full bg-geist-link/10 text-geist-link flex items-center justify-center text-xs">03</span>
+                        Easy Sharing
+                    </h3>
+                    <p class="text-sm text-mute">Smaller files are easier to send via email, Slack, or upload to social media platforms with file limits.</p>
+                </div>
+                <div class="p-6 bg-canvas rounded-xl shadow-v-1">
+                    <h3 class="font-bold text-ink mb-2 flex items-center gap-2">
+                        <span class="h-6 w-6 rounded-full bg-geist-link/10 text-geist-link flex items-center justify-center text-xs">04</span>
+                        Privacy First
+                    </h3>
+                    <p class="text-sm text-mute">MrCompress processes everything in your browser. Your images never leave your computer.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</Layout>
