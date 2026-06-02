@@ -1,0 +1,22 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Optimizer from '../components/Optimizer';
+---
+
+<Layout 
+	title="Social Media Image Resizer - Instagram, YouTube, TikTok"
+	description="Resize your images for social media platforms with one click. Presets for Instagram, YouTube, TikTok, Facebook and more."
+>
+	<section class="py-24">
+		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-12">
+			<h1 class="text-4xl font-bold tracking-tight text-ink sm:text-6xl mb-6">
+				Social Media <span class="bg-gradient-to-r from-geist-link to-cyan-deep bg-clip-text text-transparent">Resizer.</span>
+			</h1>
+			<p class="text-lg text-mute max-w-2xl mx-auto">
+				Instantly resize your images for any platform. Professional presets for posts, stories, and covers with zero quality loss.
+			</p>
+		</div>
+
+		<Optimizer client:only="react" initialTab="social" allowedTabs={['social']} showSocialPresets={true} />
+	</section>
+</Layout>

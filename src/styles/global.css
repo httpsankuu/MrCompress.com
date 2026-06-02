@@ -24,6 +24,7 @@
   --dark-hairline: #333333;
   --dark-hairline-strong: #444444;
   --dark-body: #a3a3a3;
+  --dark-geist-link: #3291ff;
 
   --font-geist: "Inter", "Geist", system-ui, -apple-system, sans-serif;
   --font-geist-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
@@ -86,6 +87,7 @@
     --color-hairline: var(--dark-hairline);
     --color-hairline-strong: var(--dark-hairline-strong);
     --color-body: var(--dark-body);
+    --color-geist-link: var(--dark-geist-link);
     color-scheme: dark;
   }
 }

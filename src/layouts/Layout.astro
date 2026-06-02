@@ -87,6 +87,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://mrcompre
 						<a href="/convert" class="flex items-center gap-1.5 px-3 py-1.5 rounded-geist border border-hairline bg-canvas text-ink hover:bg-canvas-soft transition-all text-xs font-semibold shadow-v-1">
 							Convert
 						</a>
+						<a href="/social" class="text-xs font-medium text-mute hover:text-ink transition-colors px-1">Social</a>
+						<a href="/remove-background" class="text-xs font-medium text-mute hover:text-ink transition-colors px-1">Remove BG</a>
 						<div class="w-px h-4 bg-hairline mx-2"></div>
 						<a href="/about" class="text-xs font-medium text-mute hover:text-ink transition-colors px-1">About</a>
 					</div>
@@ -139,6 +141,14 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://mrcompre
 					<a href="/convert" class="flex items-center justify-between px-6 py-4 rounded-2xl border border-hairline bg-canvas text-ink font-bold shadow-v-2">
 						Convert Format
 						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right-left"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+					</a>
+					<a href="/social" class="flex items-center justify-between px-6 py-4 rounded-2xl border border-hairline bg-canvas text-ink font-bold shadow-v-2">
+						Social Resizer
+						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+					</a>
+					<a href="/remove-background" class="flex items-center justify-between px-6 py-4 rounded-2xl border border-hairline bg-canvas text-ink font-bold shadow-v-2">
+						Remove BG
+						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
 					</a>
 					<div class="h-px bg-hairline my-4"></div>
 					<a href="/about" class="px-6 py-3 text-lg font-medium text-mute hover:text-ink">About Us</a>
