@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mrcompress-v2';
+const CACHE_NAME = 'mrcompress-v3';
 const ASSETS_TO_CACHE = [
   '/',
   '/favicon-96x96.png',

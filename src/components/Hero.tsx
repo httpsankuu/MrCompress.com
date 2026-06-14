@@ -21,7 +21,10 @@ export default function Hero() {
           <a href="/compress" className="w-full sm:w-auto px-8 py-4 bg-ink text-canvas rounded-geist-pill font-bold shadow-v-4 hover:opacity-90 active:scale-95 transition-all text-sm">
             {t('nav.compress')}
           </a>
-          <a href="#features" className="w-full sm:w-auto px-8 py-4 bg-canvas text-ink border border-hairline rounded-geist-pill font-bold shadow-v-2 hover:bg-canvas-soft active:scale-95 transition-all text-sm">
+          <a href="/social" className="w-full sm:w-auto px-8 py-4 bg-canvas text-ink border border-hairline rounded-geist-pill font-bold shadow-v-2 hover:bg-canvas-soft active:scale-95 transition-all text-sm">
+            Social Resizer
+          </a>
+          <a href="#features" className="w-full sm:w-auto px-8 py-4 text-mute hover:text-ink font-bold transition-all text-sm">
             Learn More
           </a>
         </div>

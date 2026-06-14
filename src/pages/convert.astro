@@ -1,6 +1,26 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Optimizer from '../components/Optimizer';
+import ErrorBoundary from '../components/ErrorBoundary';
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://mrcompress.pages.dev/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Convert",
+      "item": "https://mrcompress.pages.dev/convert"
+    }
+  ]
+};
 ---
 
 <Layout 
@@ -8,6 +28,10 @@ import Optimizer from '../components/Optimizer';
 	description="Convert your images to different formats online for free. Support for WebP, AVIF, JPEG, PNG, and PDF conversion without server processing."
 	keywords="convert image format, image converter, webp to jpg, png to webp, avif converter, image to pdf"
 >
+	<Fragment slot="head">
+		<script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+	</Fragment>
+
 	<section class="relative overflow-hidden pt-8 pb-8 sm:pt-12">
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-8">
 			<nav class="flex text-[10px] uppercase font-bold tracking-widest text-mute" aria-label="Breadcrumb">
@@ -29,6 +53,8 @@ import Optimizer from '../components/Optimizer';
 	</section>
 
 	<section class="py-12">
-		<Optimizer client:only="react" initialTab="convert" />
+		<ErrorBoundary client:only="react">
+			<Optimizer client:only="react" initialTab="convert" />
+		</ErrorBoundary>
 	</section>
 </Layout>

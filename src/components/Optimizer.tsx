@@ -85,9 +85,6 @@ export default function Optimizer({
   const [compareOffset, setCompareOffset] = useState(50);
   const [batchProgress, setBatchProgress] = useState(0);
   const [exifData, setExifData] = useState<Record<string, any> | null>(null);
-  const [watermarkText, setWatermarkText] = useState('');
-  const [watermarkOpacity, setWatermarkOpacity] = useState(50);
-  const [watermarkSize, setWatermarkSize] = useState(20);
   
   // Advanced Eraser state
   const [isEraserMode, setIsEraserMode] = useState(false);
@@ -333,21 +330,6 @@ export default function Optimizer({
         sX = (sW - actualSW) / 2; sY = (sH - actualSH) / 2; sW = actualSW; sH = actualSH;
     }
     ctx!.drawImage(sCanvas, sX, sY, sW, sH, 0, 0, canvas.width, canvas.height);
-
-    // Apply Watermark
-    if (watermarkText && watermarkText.trim()) {
-        ctx!.save();
-        const fontSize = (canvas.width * watermarkSize) / 100;
-        ctx!.font = `bold ${fontSize}px Inter, system-ui, sans-serif`;
-        ctx!.fillStyle = `rgba(255, 255, 255, ${watermarkOpacity / 100})`;
-        ctx!.textAlign = 'center';
-        ctx!.textBaseline = 'middle';
-        // Draw diagonal watermark
-        ctx!.translate(canvas.width / 2, canvas.height / 2);
-        ctx!.rotate(-Math.PI / 4);
-        ctx!.fillText(watermarkText, 0, 0);
-        ctx!.restore();
-    }
 
     const tType = outputFormat === 'original' ? imgState.type : outputFormat;
     const ext = mimeToExt[tType] || 'bin';
@@ -628,26 +610,6 @@ export default function Optimizer({
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1.5"><label className="text-[10px] uppercase text-mute block font-medium">{t('optimizer.width')}</label><div className="relative"><input type="number" value={targetWidth} disabled={images.length === 0} onChange={(e) => { const v = parseInt(e.target.value) || 0; setTargetWidth(v); if (maintainAspectRatio && currentImage) setTargetHeight(Math.round(v/currentImage.aspectRatio)); }} className="w-full h-9 rounded-geist border border-hairline bg-canvas px-3 text-xs font-medium text-ink" /><span className="absolute right-3 top-2.5 text-[10px] text-mute">PX</span></div></div>
                       <div className="space-y-1.5"><label className="text-[10px] uppercase text-mute block font-medium">{t('optimizer.height')}</label><div className="relative"><input type="number" value={targetHeight} disabled={images.length === 0} onChange={(e) => { const v = parseInt(e.target.value) || 0; setTargetHeight(v); if (maintainAspectRatio && currentImage) setTargetWidth(Math.round(v*currentImage.aspectRatio)); }} className="w-full h-9 rounded-geist border border-hairline bg-canvas px-3 text-xs font-medium text-ink" /><span className="absolute right-3 top-2.5 text-[10px] text-mute">PX</span></div></div>
-                    </div>
-                  </div>
-                )}
-                {!currentImage?.isSvg && (
-                  <div className="space-y-4 pt-4 border-t border-hairline">
-                    <p className="text-xs font-medium text-ink flex items-center gap-2"><Sparkles className="h-3.5 w-3.5 text-geist-link" /> Watermark</p>
-                    <div className="space-y-3">
-                        <input type="text" placeholder="Your Watermark Text" value={watermarkText} onChange={(e) => setWatermarkText(e.target.value)} className="w-full h-9 rounded-geist border border-hairline bg-canvas px-3 text-xs font-medium text-ink focus:outline-none focus:ring-1 focus:ring-geist-link" />
-                        {watermarkText && (
-                            <div className="space-y-4 animate-in fade-in slide-in-from-top-1">
-                                <div className="space-y-2">
-                                    <div className="flex justify-between"><label className="text-[10px] uppercase text-mute font-black">Opacity</label><span className="text-[10px] font-bold text-ink">{watermarkOpacity}%</span></div>
-                                    <input type="range" min="1" max="100" value={watermarkOpacity} onChange={(e) => setWatermarkOpacity(parseInt(e.target.value))} className="w-full h-1 bg-canvas-soft rounded-full appearance-none cursor-pointer" />
-                                </div>
-                                <div className="space-y-2">
-                                    <div className="flex justify-between"><label className="text-[10px] uppercase text-mute font-black">Size</label><span className="text-[10px] font-bold text-ink">{watermarkSize}%</span></div>
-                                    <input type="range" min="5" max="100" value={watermarkSize} onChange={(e) => setWatermarkSize(parseInt(e.target.value))} className="w-full h-1 bg-canvas-soft rounded-full appearance-none cursor-pointer" />
-                                </div>
-                            </div>
-                        )}
                     </div>
                   </div>
                 )}

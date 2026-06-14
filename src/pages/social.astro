@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Optimizer from '../components/Optimizer';
+import ErrorBoundary from '../components/ErrorBoundary';
 ---
 
 <Layout 
@@ -17,6 +18,8 @@ import Optimizer from '../components/Optimizer';
 			</p>
 		</div>
 
-		<Optimizer client:only="react" initialTab="social" allowedTabs={['social']} showSocialPresets={true} />
+		<ErrorBoundary client:only="react">
+			<Optimizer client:only="react" initialTab="social" allowedTabs={['social']} showSocialPresets={true} />
+		</ErrorBoundary>
 	</section>
 </Layout>

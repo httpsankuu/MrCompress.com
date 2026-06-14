@@ -15,7 +15,7 @@ const {
 	title, 
 	description = "Compress images online for free without losing quality. Optimize image size to 100kb, 50kb, or 20kb easily with our secure, local MrCompress.",
 	keywords = "compress image, compress image size, compress image online, compress image file, compress image free, compress image without losing quality",
-	ogImage = "/web-app-manifest-512x512.png",
+	ogImage = "/social-share.png",
 	ogType = "website"
 } = Astro.props;
 
@@ -241,11 +241,12 @@ const schema = {
 
 			// Mobile Menu Logic
 			const mobileMenuButton = document.getElementById('mobile-menu-button');
+			const mobileTabMenuButton = document.getElementById('mobile-tab-menu');
 			const closeMobileMenuButton = document.getElementById('close-mobile-menu');
 			const mobileMenu = document.getElementById('mobile-menu');
 
 			const setupMobileMenu = () => {
-				if (mobileMenuButton && mobileMenu && closeMobileMenuButton) {
+				if (mobileMenu && closeMobileMenuButton) {
 					const focusableElements = mobileMenu.querySelectorAll('a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select');
 					const firstFocusableElement = focusableElements[0];
 					const lastFocusableElement = focusableElements[focusableElements.length - 1];
@@ -253,14 +254,17 @@ const schema = {
 					const closeMenu = () => {
 						mobileMenu.classList.add('hidden');
 						document.body.style.overflow = '';
-						mobileMenuButton.focus();
+						if (mobileMenuButton) mobileMenuButton.focus();
 					};
 
-					mobileMenuButton.addEventListener('click', () => {
+					const openMenu = () => {
 						mobileMenu.classList.remove('hidden');
 						document.body.style.overflow = 'hidden';
 						if (firstFocusableElement) (firstFocusableElement as HTMLElement).focus();
-					});
+					};
+
+					if (mobileMenuButton) mobileMenuButton.addEventListener('click', openMenu);
+					if (mobileTabMenuButton) mobileTabMenuButton.addEventListener('click', openMenu);
 
 					closeMobileMenuButton.addEventListener('click', closeMenu);
 
@@ -293,21 +297,57 @@ const schema = {
 			// Active Link Logic
 			const setupActiveLinks = () => {
 				const currentPath = window.location.pathname;
+				
+				// Standard nav links
 				document.querySelectorAll('nav a').forEach(link => {
-					if (link.getAttribute('href') === currentPath && currentPath !== '/') {
+					const href = link.getAttribute('href');
+					if (href === currentPath && currentPath !== '/') {
 						link.setAttribute('aria-current', 'page');
 						link.classList.add('opacity-100');
-					} else if (link.getAttribute('href') === '/' && currentPath === '/') {
+						link.classList.add('text-ink');
+						link.classList.remove('text-mute');
+					} else if (href === '/' && currentPath === '/') {
 						link.setAttribute('aria-current', 'page');
+					}
+				});
+
+				// Bottom tab specific active state
+				document.querySelectorAll('[data-nav-link]').forEach(link => {
+					if (link.getAttribute('href') === currentPath) {
+						link.classList.add('text-ink');
+						link.classList.remove('text-mute');
+						// Add a small active indicator if needed, but text color change is often enough
 					}
 				});
 			}
 			setupActiveLinks();
 			document.addEventListener('astro:after-swap', setupActiveLinks);
 		</script>
-		<main id="main-content">
+		<main id="main-content" class="pb-24 md:pb-0 safe-area-bottom">
 			<slot />
 		</main>
+
+		<!-- Mobile Bottom Tab Bar -->
+		<nav class="fixed bottom-0 left-0 right-0 z-[60] h-16 bg-canvas/80 backdrop-blur-xl border-t border-hairline md:hidden safe-area-bottom">
+			<div class="grid h-full grid-cols-4">
+				<a href="/compress" class="flex flex-col items-center justify-center gap-1 text-mute hover:text-ink transition-colors" data-nav-link="/compress">
+					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M12 2v10"/><path d="m9 9 3 3 3-3"/></svg>
+					<span class="text-[10px] font-bold uppercase tracking-tighter">Compress</span>
+				</a>
+				<a href="/convert" class="flex flex-col items-center justify-center gap-1 text-mute hover:text-ink transition-colors" data-nav-link="/convert">
+					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+					<span class="text-[10px] font-bold uppercase tracking-tighter">Convert</span>
+				</a>
+				<a href="/social" class="flex flex-col items-center justify-center gap-1 text-mute hover:text-ink transition-colors" data-nav-link="/social">
+					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+					<span class="text-[10px] font-bold uppercase tracking-tighter">Social</span>
+				</a>
+				<button id="mobile-tab-menu" class="flex flex-col items-center justify-center gap-1 text-mute hover:text-ink transition-colors">
+					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+					<span class="text-[10px] font-bold uppercase tracking-tighter">Menu</span>
+				</button>
+			</div>
+		</nav>
 		<footer class="border-t border-hairline bg-canvas py-16 mt-24">
 			<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 				<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">

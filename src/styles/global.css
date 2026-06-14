@@ -3,7 +3,7 @@
 
 @theme {
   --color-ink: #171717;
-  --color-mute: #737373;
+  --color-mute: #525252;
   --color-canvas: #ffffff;
   --color-canvas-soft: #fafafa;
   --color-canvas-soft-2: #f5f5f5;
@@ -145,6 +145,10 @@
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+@utility safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* Custom Range Input */

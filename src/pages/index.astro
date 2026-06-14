@@ -2,6 +2,8 @@
 import Layout from '../layouts/Layout.astro';
 import Optimizer from '../components/Optimizer';
 import Hero from '../components/Hero';
+import FAQ from '../components/FAQ';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 const faqSchema = {
   "@context": "https://schema.org",
@@ -75,7 +77,9 @@ const faqSchema = {
 	<Hero client:only="react" />
 
 	<section id="tool" class="pb-24">
-		<Optimizer client:only="react" />
+		<ErrorBoundary client:only="react">
+			<Optimizer client:only="react" />
+		</ErrorBoundary>
 	</section>
 
 	<section class="py-24 border-t border-hairline bg-canvas-soft/30">
@@ -95,39 +99,5 @@ const faqSchema = {
 		</div>
 	</section>
 
-	<section id="faq" class="py-24 border-t border-hairline bg-canvas">
-		<div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-			<h2 class="text-3xl font-bold text-ink mb-12 text-center">Frequently Asked Questions</h2>
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-				<div>
-					<h3 class="text-lg font-bold text-ink mb-2">How to compress an image?</h3>
-					<p class="text-sm text-body leading-relaxed">To compress an image, simply drag and drop your file into our optimizer. Adjust the quality slider to find the perfect balance between file size and clarity, then click the download button. Everything happens locally in your browser for maximum privacy.</p>
-				</div>
-				<div>
-					<h3 class="text-lg font-bold text-ink mb-2">How to compress image size?</h3>
-					<p class="text-sm text-body leading-relaxed">You can compress image size by reducing the quality percentage or by resizing the image's pixel dimensions. Our tool shows you a live preview of the final file size so you can achieve the exact optimization you need.</p>
-				</div>
-				<div>
-					<h3 class="text-lg font-bold text-ink mb-2">How to compress image on iPhone?</h3>
-					<p class="text-sm text-body leading-relaxed">To compress an image on an iPhone, open our website in Safari, upload a photo from your library, adjust the settings as needed, and save the optimized image directly back to your Photos app. No extra apps required.</p>
-				</div>
-				<div>
-					<h3 class="text-lg font-bold text-ink mb-2">How to compress image without losing quality?</h3>
-					<p class="text-sm text-body leading-relaxed">To compress an image without losing quality, use our advanced algorithms that remove unnecessary metadata and redundant pixel data. While "lossless" compression is available, even our "lossy" settings are designed to be visually indistinguishable from the original.</p>
-				</div>
-				<div>
-					<h3 class="text-lg font-bold text-ink mb-2">How to compress image file size?</h3>
-					<p class="text-sm text-body leading-relaxed">Reducing image file size is easy: select your file, choose a modern format like WebP or AVIF for better compression ratios, and lower the quality slider until you reach your target size.</p>
-				</div>
-				<div>
-					<h3 class="text-lg font-bold text-ink mb-2">How to compress an image on Mac?</h3>
-					<p class="text-sm text-body leading-relaxed">On a Mac, you can compress an image by using our online tool in any browser. It's a faster alternative to using built-in tools like Preview, especially when you need to convert formats or target specific file sizes.</p>
-				</div>
-				<div>
-					<h3 class="text-lg font-bold text-ink mb-2">Compress image to 20kb?</h3>
-					<p class="text-sm text-body leading-relaxed">To compress an image to 20kb, you may need to reduce the dimensions (width and height) and lower the quality setting. Our real-time size counter helps you see exactly when you've reached the 20kb threshold.</p>
-				</div>
-			</div>
-		</div>
-	</section>
+	<FAQ client:only="react" />
 </Layout>

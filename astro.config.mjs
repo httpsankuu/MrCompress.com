@@ -13,8 +13,7 @@ export default defineConfig({
     plugins: [tailwindcss()],
     server: {
       headers: {
-        'Cross-Origin-Opener-Policy': 'same-origin',
-        'Cross-Origin-Embedder-Policy': 'require-corp',
+        // Removed to fix asset loading issues
       },
     },
     optimizeDeps: {

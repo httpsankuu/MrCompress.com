@@ -13,12 +13,27 @@ type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
 const { Content } = await render(post);
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": post.data.title,
+  "description": post.data.description,
+  "datePublished": post.data.pubDate.toISOString(),
+  "author": {
+    "@type": "Organization",
+    "name": "MrCompress"
+  }
+};
 ---
 
 <Layout 
     title={post.data.title} 
     description={post.data.description}
 >
+    <Fragment slot="head">
+        <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+    </Fragment>
 	<article class="mx-auto max-w-3xl px-4 py-24">
         <div class="mb-12 text-center">
             <div class="mb-4 flex items-center justify-center gap-4">
