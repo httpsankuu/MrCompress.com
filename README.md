@@ -49,7 +49,7 @@ Building **MrCompress** was a deep dive into modern web engineering. Key takeawa
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/your-username/mrcompress.git
+   git clone https://github.com/httpsankuu/mrcompress.git
    cd mrcompress
    ```
 
