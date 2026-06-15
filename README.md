@@ -2,6 +2,8 @@
 
 **MrCompress** is a fast, secure, and free online image optimizer and converter designed for the modern web. Built with a focus on performance and privacy, it handles all image processing locally in your browser, ensuring your data never leaves your device.
 
+🔗 **[Live Website](https://mrcompress.pages.dev/)**
+
 ![MrCompress Banner](src/assets/background.svg)
 
 ## ✨ Key Features
@@ -16,6 +18,16 @@
   - **Resize & Rotate:** Easily adjust dimensions while maintaining aspect ratio.
 - **🌍 Multi-language:** Fully localized in 10 languages including English, Arabic, German, Spanish, French, Hindi, Japanese, Portuguese, Russian, and Chinese.
 - **📱 Mobile Optimized:** A seamless experience across desktop, iPhone, and Android devices.
+
+## 🎓 What I Learned
+
+Building **MrCompress** was a deep dive into modern web engineering. Key takeaways include:
+
+- **🛠️ Tool Website Architecture:** Learned how to build a high-performance, single-purpose tool that delivers instant value without server overhead.
+- **📈 Effective SEO & FAQ Strategy:** Mastered how to structure content and FAQ sections to rank for high-intent keywords and drive organic traffic.
+- **🔒 Client-Side Processing:** Implemented robust browser-based image manipulation using Canvas and WebWorkers, ensuring 100% user privacy.
+- **🌐 Global i18n:** Successfully managed complex internationalization for 10 languages, including RTL (Right-to-Left) support for Arabic.
+- **🎨 Modern Styling:** Leveraged Tailwind CSS v4 and Astro for a sleek, performant, and developer-centric UI/UX.
 
 ## 🛠️ Tech Stack
 
