@@ -16,9 +16,6 @@ export default defineConfig({
         // Removed to fix asset loading issues
       },
     },
-    optimizeDeps: {
-      exclude: ['@imgly/background-removal'],
-    },
   },
 
   adapter: cloudflare({
