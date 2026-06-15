@@ -1,5 +1,6 @@
 {
   "name": "image-optimizer",
+  "description": "A fast, secure, and privacy-focused online image optimizer and converter that processes everything locally in the browser.",
   "type": "module",
   "version": "0.0.1",
   "engines": {
