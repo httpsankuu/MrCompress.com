@@ -82,6 +82,10 @@ Building **MrCompress** was a deep dive into modern web engineering. Key takeawa
 
 MrCompress follows a minimalist, high-signal design language inspired by Vercel. It prioritizes clarity, typography, and subtle interactive feedback to provide a premium "developer-tool" feel.
 
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 ---
 
 Developed with ❤️ for a faster, more private web.
